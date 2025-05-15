@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: store
+  datasource:
+    url: jdbc:postgresql://localhost:5432/store_api?createDatabaseIfNotExist=true
+    username: postgres
+    password: Yp040721
+  jpa:
+    show-sql: true
+server:
+  port: 8081
