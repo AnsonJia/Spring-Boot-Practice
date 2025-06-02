@@ -1,5 +1,6 @@
 package com.codewithmosh.store.entities;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Setter
 @Getter
 @AllArgsConstructor
