@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class UserDto {
+    //items to expose to outside
     private Long id;
     private String name;
     private String email;
