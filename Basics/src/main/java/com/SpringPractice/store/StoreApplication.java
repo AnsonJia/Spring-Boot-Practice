@@ -2,6 +2,7 @@ package com.SpringPractice.store;
 
 import com.SpringPractice.store.PaymentService.PayPal;
 import com.SpringPractice.store.PaymentService.Stripe;
+import com.SpringPractice.store.UserRegistrationService.UserService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -32,7 +33,13 @@ public class StoreApplication {
 
 
 		var manager = context.getBean(NotificationManager.class);
-		manager.sendNotification("test message");
+		manager.sendNotification("test message", "12345678");
+
+		// create 2 identical users to demonstrate error
+		var userService = context.getBean(UserService.class);
+		userService.registerUser(new User(1L, "example@gmail.com", "12345678", "name"));
+		userService.registerUser(new User(1L, "example@gmail.com", "12345678", "name"));
+
 
 		context.close();
 	}

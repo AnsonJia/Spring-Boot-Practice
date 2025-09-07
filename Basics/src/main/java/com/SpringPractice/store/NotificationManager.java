@@ -12,7 +12,8 @@ public class NotificationManager {
         this.notificationService = notificationService;
     }
 
-    public void sendNotification(String message){
-        notificationService.send(message);
+    // send notification message to the contact
+    public void sendNotification(String message, String contact){
+        notificationService.send(message, contact);
     }
 }
