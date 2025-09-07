@@ -6,6 +6,7 @@ import com.SpringPractice.store.PaymentService.Stripe;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class AppConfig {
@@ -24,6 +25,7 @@ public class AppConfig {
     }
 
     @Bean
+    //@Lazy //creates objects only when needed
     public OrderService orderService(){
         if (paymentService.equals("stripe")){
             return new OrderService(stripe());

@@ -15,6 +15,8 @@ public class StoreApplication {
 		// Can get a bean for an object managed by spring
 		var orderService = context.getBean(OrderService.class);
 
+		var resource = context.getBean(HeavyResource.class);
+
 		// Constructor injection
 		//var orderService = new OrderService(new PayPal());
 
