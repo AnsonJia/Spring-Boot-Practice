@@ -5,15 +5,21 @@ import com.SpringPractice.store.PaymentService.Stripe;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class StoreApplication {
 
 	public static void main(String[] args) {
-		//IOC container
-		ApplicationContext context = SpringApplication.run(StoreApplication.class, args);
+		//IOC container where beans are stored
+		//ApplicationContext context = SpringApplication.run(StoreApplication.class, args);
+
+		//gives us the ability to manually close the context
+		ConfigurableApplicationContext context = SpringApplication.run(StoreApplication.class, args);
+
 		// Can get a bean for an object managed by spring
 		var orderService = context.getBean(OrderService.class);
+		var orderService2 = context.getBean(OrderService.class); //singleton bean example (single instance default)
 
 		var resource = context.getBean(HeavyResource.class);
 
@@ -27,6 +33,8 @@ public class StoreApplication {
 
 		var manager = context.getBean(NotificationManager.class);
 		manager.sendNotification("test message");
+
+		context.close();
 	}
 
 }
