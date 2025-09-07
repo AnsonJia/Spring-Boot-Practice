@@ -10,11 +10,21 @@ import org.springframework.context.ApplicationContext;
 public class StoreApplication {
 
 	public static void main(String[] args) {
+		//IOC container
 		ApplicationContext context = SpringApplication.run(StoreApplication.class, args);
+		// Can get a bean for an object managed by spring
 		var orderService = context.getBean(OrderService.class);
+
+		// Constructor injection
 		//var orderService = new OrderService(new PayPal());
+
+		//Setter injection (not commonly used)
 		//orderService.setPaymentService(new PayPal());
 		orderService.placeOrder();
+
+
+		var manager = context.getBean(NotificationManager.class);
+		manager.sendNotification("test message");
 	}
 
 }
