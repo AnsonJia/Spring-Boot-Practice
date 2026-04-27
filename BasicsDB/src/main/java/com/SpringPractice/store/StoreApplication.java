@@ -1,51 +1,33 @@
 package com.SpringPractice.store;
 
-import com.SpringPractice.store.PaymentService.PayPal;
-import com.SpringPractice.store.PaymentService.Stripe;
-import com.SpringPractice.store.UserRegistrationService.UserService;
+import com.SpringPractice.store.entities.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class StoreApplication {
 
 	public static void main(String[] args) {
-		//IOC container where beans are stored
 		//ApplicationContext context = SpringApplication.run(StoreApplication.class, args);
 
-		//configurable gives us the ability to manually close the context
-		ConfigurableApplicationContext context = SpringApplication.run(StoreApplication.class, args);
+		//example of using constructor to initialize all fields
+		//var user = new User(1L, "name", "email", "password");
 
-		// Can get a bean for an object managed by spring
-		var orderService = context.getBean(OrderService.class);
-		//singleton bean example (single instance default) (only 1 order service created per container)
-		var orderService2 = context.getBean(OrderService.class); //any subsequent requests for that bean return the same object
+		//example of using getters and setters
+		//var user2 = new User();
+		//user2.setName("John");
+		//user2.setEmail("john@example.com");
+		//user2.setPassword("password");
 
-		//example of lazy initialization (bean only get created when called)
-		var resource = context.getBean(HeavyResource.class);
+		//example of using builder
+		//helps to create complex obj step by step especially if there are lots of optional fields of config
+		var user = User.builder()
+				.name("John")
+				.password("1234")
+				.email("john@example.com")
+				.build();
 
-		// Constructor injection
-		//var orderService = new OrderService(new PayPal());
-		//orderService.placeOrder();
-
-		//Setter injection (not commonly used) only used if optional dependency
-		//var orderService = new OrderService();
-		//orderService.setPaymentService(new PayPal());
-		orderService.placeOrder();
-
-		//notification manager
-		var manager = context.getBean(NotificationManager.class);
-		manager.sendNotification("test message", "12345678");
-
-		// create 2 identical users to demonstrate error of having 2 same users
-		var userService = context.getBean(UserService.class);
-		userService.registerUser(new User(1L, "example@gmail.com", "12345678", "name"));
-		//userService.registerUser(new User(1L, "example@gmail.com", "12345678", "name"));
-
-		//closes the context
-		context.close();
 	}
 
 }
