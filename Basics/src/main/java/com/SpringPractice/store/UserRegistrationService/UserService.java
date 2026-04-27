@@ -17,7 +17,7 @@ public class UserService {
 
     // register user function
     public void registerUser(User user){
-        // if user email exists, throw error
+        // if user email already exists, throw error
         if(userRepository.findByEmail(user.getEmail())!=null){
             throw new IllegalArgumentException("User with email "+user.getEmail() + " already exists");
         }
