@@ -2,7 +2,9 @@ package com.SpringPractice.store.PaymentService;
 
 import org.springframework.stereotype.Service;
 
-//@Service("paypal") //required for autowiring
+//required for autowiring
+//@Service("paypal") //parameter is to name the service
+// commented out annotation so we can configure beans using code (conditionally or 3rd party lib) AppConfig.java
 public class PayPal implements PaymentService{
     @Override
     public void processPayment(double amount) {

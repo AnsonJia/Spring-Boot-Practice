@@ -6,18 +6,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//@Service ("stripe")
+//@Service ("stripe") //parameter is to name the service
 //@Primary // used to set the primary bean
+// commented out annotation so we can configure beans using code (conditionally or 3rd party lib) AppConfig.java
 public class Stripe implements PaymentService {
+    //inject values from app properties
     @Value("${stripe.apiUrl}")
     private String apiUrl;
-
     @Value("${stripe.enabled}")
     private boolean enabled;
-
     @Value("${stripe.timeout:3000}") //3000ms default value timeout if not provided
     private int timeout;
-
     @Value("${stripe.supported-currencies}")
     private List<String> supportedCurrencies;
 
