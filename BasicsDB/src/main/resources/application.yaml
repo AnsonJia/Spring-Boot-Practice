@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: store
+  datasource:
+    url: jdbc:postgresql://localhost:5432/store #?createDatabaseIfNotExist=true   #this only works for mysql
+    username: postgres
+    password: Yp040721
+server:
+  port: 8090
+stripe:
+  apiUrl: https://api.stripe.com
+  timeout: 1000
+  enabled: true
+  supported-currencies: USD,EUR,GBP
+#configuration setting for the payment service
+payment-service: paypal
+#configuration setting for mail
+mail:
+  host: https://smtp.gmail.com
+  port: 5761
