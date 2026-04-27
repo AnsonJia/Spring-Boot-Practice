@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Controller // handel web requests
+@Controller // handle web requests
 public class HomeController {
+    //used to get values from the application properties/yaml file
     @Value("${spring.application.name}")
     private String appName;
 
