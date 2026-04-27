@@ -68,6 +68,10 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
 
 	</dependencies>
 
@@ -76,6 +80,19 @@
 
 	<build>
 		<plugins>
+			<!--flyway plugin so we can run migrations in the maven window-->
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>10.15.0</version>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/store</url>
+					<user>postgres</user>
+					<password>Yp040721</password>
+					<cleanDisabled>false</cleanDisabled>
+				</configuration>
+			</plugin>
+			<!--default plugin-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
