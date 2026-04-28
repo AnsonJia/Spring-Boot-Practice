@@ -1,9 +1,12 @@
 package com.SpringPractice.store.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Getter
 @Setter
 @Entity
@@ -25,4 +28,11 @@ public class Address {
 
     @Column(name = "state")
     private String state;
+
+    // a user can have many addresses but each address belongs to 1 user
+    @ManyToOne
+    @JoinColumn(name = "user_id") //foreign key specification
+    //Prevents infinite loops when printing (excludes the user from being converted to string)
+    @ToString.Exclude  //when converting address to string, it reads the user field, in user, it references address
+    private User user;
 }
