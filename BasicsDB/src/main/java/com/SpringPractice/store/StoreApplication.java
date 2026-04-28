@@ -1,6 +1,7 @@
 package com.SpringPractice.store;
 
 import com.SpringPractice.store.entities.Address;
+import com.SpringPractice.store.entities.Tag;
 import com.SpringPractice.store.entities.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -29,13 +30,14 @@ public class StoreApplication {
 				.email("john@example.com")
 				.build();
 
+		/*
 		var address = Address.builder()
 				.street("street")
 				.city("city")
 				.state("state")
 				.zip("zip")
 				.build();
-
+		*/
 		//example of adding an address/////////////////////////////////////////////////////////
 		// Update the inverse side (the collection on User)
 		// This does NOT affect the database, but keeps the in-memory object graph consistent
@@ -47,8 +49,16 @@ public class StoreApplication {
 		//these 2 relations are highly related and required to run so it's best to put logic inside user class/////
 
 		//replaces the 2 above lines with helper method inside User class
-		user.addAddress(address);
-		System.out.println();
+		//user.addAddress(address);
+
+		var tag = new Tag("tag1");
+		//wiring tag and user objects together, same as above
+		//put below 2 in helper method user class
+		//user.getTags().add(tag);
+		//tag.getUsers().add(user);
+		user.addTag("tag1");//replaces the lines above
+
+		System.out.println(user);
 
 	}
 

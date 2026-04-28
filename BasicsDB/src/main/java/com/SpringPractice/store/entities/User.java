@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //an entity is a java class that represents a table in our db. each instance represents a row in the db
 @Setter //automatic generation of setters
@@ -49,4 +51,27 @@ public class User {
         addresses.remove(address);
         address.setUser(null);
     }
+
+    public void addTag(String tagName) {//passing a string so the class is responsible for creating the tag object
+        var tag = new Tag(tagName); //create a new tag object with the string name
+        tags.add(tag);
+        tag.getUsers().add(this);
+    }
+
+    public void removeTag(String tagName) {
+        var tag = new Tag(tagName);
+        tags.remove(tag);
+        tag.getUsers().remove(this);
+    }
+
+    //many-to-many relation. a user can have many tags and a tags can belong to many users (we set user as owner here)
+    @ManyToMany //in a many-to-many relation, either side can be the owner (both sides are foreign keys)
+    @JoinTable( //we will have user be the owner (owner must have @JoinColumn but for n-n we use @JoinTable)
+            name = "user_tags", //needs to include the name of join table (n-n relation needs a separate table)
+            joinColumns = @JoinColumn(name = "user_id"), //set name of foreign key referencing the owner (Users) table
+            inverseJoinColumns = @JoinColumn(name = "tag_id")//set name of the other foreign key
+    )
+    @Builder.Default //makes sure this gets initialized
+    private Set<Tag> tags = new HashSet<>();
+
 }
