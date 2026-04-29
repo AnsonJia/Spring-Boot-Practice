@@ -1,6 +1,7 @@
 package com.SpringPractice.store;
 
 import com.SpringPractice.store.entities.Address;
+import com.SpringPractice.store.entities.Profile;
 import com.SpringPractice.store.entities.Tag;
 import com.SpringPractice.store.entities.User;
 import org.springframework.boot.SpringApplication;
@@ -38,7 +39,7 @@ public class StoreApplication {
 				.zip("zip")
 				.build();
 		*/
-		//example of adding an address/////////////////////////////////////////////////////////
+		//Address one to many example/////////////////////////////////////////////////////////////
 		// Update the inverse side (the collection on User)
 		// This does NOT affect the database, but keeps the in-memory object graph consistent
 		//user.getAddresses().add(address);//user now knows about the addresses
@@ -51,12 +52,26 @@ public class StoreApplication {
 		//replaces the 2 above lines with helper method inside User class
 		//user.addAddress(address);
 
-		var tag = new Tag("tag1");
+		//System.out.println(user);
+
+		//Tag many to many example////////////////////////////////////////////////////////////////
+		//var tag = new Tag("tag1");
+
 		//wiring tag and user objects together, same as above
 		//put below 2 in helper method user class
 		//user.getTags().add(tag);
 		//tag.getUsers().add(user);
-		user.addTag("tag1");//replaces the lines above
+
+		//user.addTag("tag1");//replaces the lines above
+
+		//System.out.println(user);
+
+		//Profile one to one example////////////////////////////////////////////////////////////////
+		var profile = Profile.builder()
+						.bio("bio")
+						.build();
+		user.setProfile(profile);
+		profile.setUser(user);
 
 		System.out.println(user);
 

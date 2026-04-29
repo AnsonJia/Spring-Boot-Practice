@@ -35,7 +35,7 @@ public class User {
     private String password;
 
     //defines a one-to-many relationship (a user can have many addresses but every address belongs to 1 user)
-    // tells hibernate the owner of the relationship (name of field that is the owner of the relationship)
+    //tells hibernate the owner of the relationship (name of field that is the owner of the relationship) ***required***
     @OneToMany(mappedBy = "user") //The relationship is controlled by the user field inside the Address class.
     @Builder.Default //tells builder to include initializations like this when building an object (don't use builder)
     private List<Address> addresses =  new ArrayList<>();
@@ -74,4 +74,7 @@ public class User {
     @Builder.Default //makes sure this gets initialized
     private Set<Tag> tags = new HashSet<>();
 
+    //one-to-one relation. a user has one profile and every profile is mapped to one user
+    @OneToOne(mappedBy = "user")//the owner is the name of the field in profile
+    private Profile profile;
 }
