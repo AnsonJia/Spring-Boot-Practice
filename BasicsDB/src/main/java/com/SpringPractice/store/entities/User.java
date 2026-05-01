@@ -77,4 +77,13 @@ public class User {
     //one-to-one relation. a user has one profile and every profile is mapped to one user
     @OneToOne(mappedBy = "user")//the owner is the name of the field in profile
     private Profile profile;
+
+    @ManyToMany
+    @JoinTable(//example using model first approach to build db with JPA buddy
+            name = "wishlist",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    //we don't need to go to product to add the inverse relation. Product doesn't need to know about users
+    private Set<Product> wishlist = new HashSet<>();
 }
