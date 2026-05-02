@@ -52,12 +52,13 @@
 		</dependency>
 
 		<!--dependency for auto restart-->
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional> <!-- will only work in dev, not deployed in production -->
+			<optional>true</optional>
 		</dependency>
-
+		-->
 		<!--dependency for database connections-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
