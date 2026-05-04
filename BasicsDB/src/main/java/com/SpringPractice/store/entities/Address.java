@@ -30,7 +30,7 @@ public class Address {
     private String state;
 
     // a user can have many addresses but each address belongs to 1 user
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)//when there is one object on the other side of the relationship, default is eager
     @JoinColumn(name = "user_id") //foreign key specification (owner of relation is usually one with foreign key)
     //Prevents infinite loops when printing (excludes the user from being converted to string)
     @ToString.Exclude  //when converting address to string, it reads the user field, in user, it references address

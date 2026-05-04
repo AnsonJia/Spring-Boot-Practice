@@ -98,9 +98,15 @@ public class StoreApplication {
 		//delete a user from db by id
 		//repository.deleteById(1L); //(hibernate deletes child records from associated tables first before the user)
 
-
+		//create userService to demonstrate @Transactional
 		var service = context.getBean(UserService.class);
-		service.showEntityStates();
+		//service.showEntityStates();
+
+		//demonstrating lazy loading
+		service.showRelatedEntities();
+		service.showRelatedEntities2();
+		//example 2 lazy loading
+		service.fetchAddress();
 	}
 
 }

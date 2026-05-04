@@ -31,7 +31,7 @@ public class Profile {
     private Integer loyaltyPoints;
 
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY) //set to lazy initialization (only works for the owner of relationship)
     @JoinColumn(name = "id") //profile is the owner, so set join column by the foreign key in profile
     //required for defining one-to-one relationships (for the owner only)
     @MapsId//tells hibernate to use the same col as both the prim and foreign key
