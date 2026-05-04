@@ -41,7 +41,6 @@ public class UserService {
         else
             System.out.println("Transient / Detached");
     }
-
     //check to see if eager or lazy loading (Eager: OneToOne, ManyToOne     Lazy: OneToMany, ManyToMany)
     public void showRelatedEntities(){
         var user = userRepository.findById(1L).orElseThrow();
@@ -49,6 +48,7 @@ public class UserService {
     } //in one-to-one relationships, changing fetch strategy only affects owner, so it won't affect the user entity
     //one method to fix this is to remove OneToOne method in User
         // likely best because when fetch user info for authentication, we don't need profile information
+
 
     //example of lazy loading
     //user is lazy loaded (when profile transaction ends, cant get user associated to it)
@@ -65,6 +65,8 @@ public class UserService {
         var address = addressRepository.findById(1L).orElseThrow();
     }
 
+
+    //example of persisting related entities
     public void persistRelated(){
         var user = User.builder()
                 .name("John")
@@ -77,10 +79,30 @@ public class UserService {
                 .state("state")
                 .zip("zip")
                 .build();
-
         user.addAddress(address);
         userRepository.save(user); //only user will be saved not address (hibernate does not propagate to related entities)
         //addressRepository.save(address); //one way to fix this is to save the address separately
             //a better solution is to add cascade persist to the relationship in user so address is propagated
+    }
+
+
+    //example of deleting parent and related entities
+    public void deleteRelated(){
+        //hibernate first tries to fetch entity with its relationship (no referential integrity violation - data remains in valid state)
+        userRepository.deleteById(1L);
+        //issue 1: User has a OneToOne relationship with profile and doesn't know what to do with profile if delete user
+            //set cascade type to remove in the user relationship
+            //many-to-many JOIN tables don't need cascading (hibernate assumes it's safe to delete)
+        //issue 2: Address table foreign key doesn't have a delete action (if user delete with address, cant delete user)
+            //could set to on delete cascade for db SQL migration, best to set cascade in the application in addresses relation
+    }
+    //example of deleting child entity
+    @Transactional
+    public void deleteRelated2(){
+        var user = userRepository.findById(1L).orElseThrow();//findById is transactional. line ends, transaction ends
+        var address = user.getAddresses().getFirst();//lazy lading between user and address (need to fetch address but no persistence context)
+        user.removeAddress(address);//removeAddress sets user to null (orphan entity), but the db table is set to not null
+            //set the addresses relationship in User with orphan removal true
+        userRepository.save(user);
     }
 }

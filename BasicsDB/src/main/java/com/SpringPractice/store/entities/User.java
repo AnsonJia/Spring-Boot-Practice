@@ -37,7 +37,10 @@ public class User {
     //defines a one-to-many relationship (a user can have many addresses but every address belongs to 1 user)
     //tells hibernate the owner of the relationship (name of field that is the owner of the relationship) ***required***
     //The relationship is controlled by the user field inside the Address class.
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST) //persist means related entity (address) also persisted
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+        //persist means related entity (address) also persisted
+        //remove means if user removed, address also removed
+        //orphanRemoval tells hibernate to remove orphan entities
     @Builder.Default //tells builder to include initializations like this when building an object (don't use builder)
     private List<Address> addresses =  new ArrayList<>();
 
@@ -50,7 +53,7 @@ public class User {
     //helper method to remove address
     public void removeAddress(Address address) {
         addresses.remove(address);
-        address.setUser(null);
+        address.setUser(null);//sets user to null (orphan entity), but the db table is set to not null
     }
 
     public void addTag(String tagName) {//passing a string so the class is responsible for creating the tag object
@@ -76,7 +79,8 @@ public class User {
     private Set<Tag> tags = new HashSet<>();
 
     //one-to-one relation. a user has one profile and every profile is mapped to one user
-    @OneToOne(mappedBy = "user")//the owner is the name of the field in profile
+    //the owner is the name of the field in profile
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)//cascade remove to profile is user is removed
     private Profile profile;
 
     @ManyToMany

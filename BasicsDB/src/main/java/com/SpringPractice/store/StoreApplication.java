@@ -108,8 +108,11 @@ public class StoreApplication {
 		//example 2 lazy loading
 		service.fetchAddress();
 
-
+		//demonstrating persisting related entities
 		service.persistRelated();
-	}
 
+		//demonstrating deleting related entities
+		//service.deleteRelated();
+
+	}
 }
