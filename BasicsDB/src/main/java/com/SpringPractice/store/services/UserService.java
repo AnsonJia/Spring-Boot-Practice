@@ -86,7 +86,7 @@ public class UserService {
     }
 
 
-    //example of deleting parent and related entities
+    //example of deleting parent and related entities (user)
     public void deleteRelated(){
         //hibernate first tries to fetch entity with its relationship (no referential integrity violation - data remains in valid state)
         userRepository.deleteById(1L);
@@ -96,7 +96,7 @@ public class UserService {
         //issue 2: Address table foreign key doesn't have a delete action (if user delete with address, cant delete user)
             //could set to on delete cascade for db SQL migration, best to set cascade in the application in addresses relation
     }
-    //example of deleting child entity
+    //example of deleting child entity (addresses)
     @Transactional
     public void deleteRelated2(){
         var user = userRepository.findById(1L).orElseThrow();//findById is transactional. line ends, transaction ends

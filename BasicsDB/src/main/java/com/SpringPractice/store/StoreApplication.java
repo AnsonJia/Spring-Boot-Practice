@@ -113,6 +113,7 @@ public class StoreApplication {
 
 		//demonstrating deleting related entities
 		//service.deleteRelated();
+		//service.deleteRelated2()
 
 	}
 }
