@@ -1,5 +1,6 @@
 package com.SpringPractice.store.services;
 
+import com.SpringPractice.store.entities.Address;
 import com.SpringPractice.store.entities.User;
 import com.SpringPractice.store.repositories.AddressRepository;
 import com.SpringPractice.store.repositories.ProfileRepository;
@@ -62,5 +63,24 @@ public class UserService {
         //in Address, there is a relationship to user and user has a one-to-one relationship with profile
             //profile will also be eager loaded (address+user+profile) if no lazy loading
         var address = addressRepository.findById(1L).orElseThrow();
+    }
+
+    public void persistRelated(){
+        var user = User.builder()
+                .name("John")
+                .email("john@gmail.com")
+                .password("password")
+                .build();
+        var address = Address.builder()
+                .street("street")
+                .city("city")
+                .state("state")
+                .zip("zip")
+                .build();
+
+        user.addAddress(address);
+        userRepository.save(user); //only user will be saved not address (hibernate does not propagate to related entities)
+        //addressRepository.save(address); //one way to fix this is to save the address separately
+            //a better solution is to add cascade persist to the relationship in user so address is propagated
     }
 }

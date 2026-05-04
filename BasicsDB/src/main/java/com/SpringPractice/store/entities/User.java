@@ -36,7 +36,8 @@ public class User {
 
     //defines a one-to-many relationship (a user can have many addresses but every address belongs to 1 user)
     //tells hibernate the owner of the relationship (name of field that is the owner of the relationship) ***required***
-    @OneToMany(mappedBy = "user") //The relationship is controlled by the user field inside the Address class.
+    //The relationship is controlled by the user field inside the Address class.
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST) //persist means related entity (address) also persisted
     @Builder.Default //tells builder to include initializations like this when building an object (don't use builder)
     private List<Address> addresses =  new ArrayList<>();
 

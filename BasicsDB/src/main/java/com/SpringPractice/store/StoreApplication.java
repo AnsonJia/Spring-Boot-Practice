@@ -107,6 +107,9 @@ public class StoreApplication {
 		service.showRelatedEntities2();
 		//example 2 lazy loading
 		service.fetchAddress();
+
+
+		service.persistRelated();
 	}
 
 }
