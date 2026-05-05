@@ -83,7 +83,8 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)//cascade remove to profile is user is removed
     private Profile profile;
 
-    @ManyToMany
+    //lazy loading by default
+    @ManyToMany//cannot set delete cascade otherwise if user delete, product delete (user is the owner)
     @JoinTable(//example using model first approach to build db with JPA buddy
             name = "wishlist",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -91,4 +92,8 @@ public class User {
     )
     //we don't need to go to product to add the inverse relation. Product doesn't need to know about users
     private Set<Product> wishlist = new HashSet<>();
+
+    public void addFavouriteProduct(Product product) {//add products to the wishlist
+        wishlist.add(product);//uni-directional relationship (product doesn't need to know about users)
+    }
 }

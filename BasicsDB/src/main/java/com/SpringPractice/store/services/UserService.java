@@ -1,14 +1,16 @@
 package com.SpringPractice.store.services;
 
 import com.SpringPractice.store.entities.Address;
+import com.SpringPractice.store.entities.Category;
+import com.SpringPractice.store.entities.Product;
 import com.SpringPractice.store.entities.User;
-import com.SpringPractice.store.repositories.AddressRepository;
-import com.SpringPractice.store.repositories.ProfileRepository;
-import com.SpringPractice.store.repositories.UserRepository;
+import com.SpringPractice.store.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @Service
@@ -17,6 +19,8 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final EntityManager entityManager; //responsible for managing entities using persistence context
     private final AddressRepository addressRepository;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     //example of managing transactions
     @Transactional//changes the transaction boundary to the entire showEntityStates method (persist until method end)
@@ -94,7 +98,7 @@ public class UserService {
             //set cascade type to remove in the user relationship
             //many-to-many JOIN tables don't need cascading (hibernate assumes it's safe to delete)
         //issue 2: Address table foreign key doesn't have a delete action (if user delete with address, cant delete user)
-            //could set to on delete cascade for db SQL migration, best to set cascade in the application in addresses relation
+            //could set to on delete cascade for db SQL migration, best to set cascade in addresses relation in user
     }
     //example of deleting child entity (addresses)
     @Transactional
@@ -104,5 +108,42 @@ public class UserService {
         user.removeAddress(address);//removeAddress sets user to null (orphan entity), but the db table is set to not null
             //set the addresses relationship in User with orphan removal true
         userRepository.save(user);
+    }
+
+    //new product added to new category
+    public void newProduct1(){
+        var category = new Category("Category 1");// don't need builder since we just need a name
+        var product = Product.builder()
+                .name("Product 1")
+                .description("Description 1")
+                .price(BigDecimal.valueOf(10.99))
+                .category(category)//category is transient while product is persistent (hibernate doesn't know what to do)
+                .build();
+        //categoryRepository.save(category);//save category first or add cascade persist in Product class
+        productRepository.save(product);//saving product makes product persistent
+    }
+    //new product added to existing category
+    @Transactional//apply transactional so persistent context is open for the whole method
+    public void newProduct2(){
+        var category = categoryRepository.findById((byte)1).orElseThrow();//transaction starts and ends (detached)
+        var product = Product.builder()
+                .name("Product 2")
+                .description("Description 2")
+                .price(BigDecimal.valueOf(10.99))
+                .category(category)//no persistence for category because it is now detached
+                .build();
+        productRepository.save(product);//persistent product references detached category
+    }
+    @Transactional//keep transaction open
+    public void addProductToWishlist(){
+        var user = userRepository.findById(1L).orElseThrow(); //transaction starts and ends
+        var products = productRepository.findAll(); //transaction starts and ends
+        //add all existing products to the user's wishlist
+        products.forEach(user::addFavouriteProduct); //no persistence, cant get wishlist from user (wishlist lazy loaded)
+        userRepository.save(user);
+    }
+    public void deleteProduct(){
+        productRepository.deleteById(1L);//wishlist table foreign key doesn't have a delete action
+        //cannot set delete cascade in wishlist relationship since user is owner, must modify db with on delete cascade
     }
 }

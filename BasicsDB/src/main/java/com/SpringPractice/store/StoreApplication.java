@@ -103,17 +103,22 @@ public class StoreApplication {
 		//service.showEntityStates();
 
 		//demonstrating lazy loading
-		service.showRelatedEntities();
-		service.showRelatedEntities2();
+		//service.showRelatedEntities();
+		//service.showRelatedEntities2();
 		//example 2 lazy loading
-		service.fetchAddress();
+		//service.fetchAddress();
 
 		//demonstrating persisting related entities
-		service.persistRelated();
+		//service.persistRelated();
 
 		//demonstrating deleting related entities
 		//service.deleteRelated();
 		//service.deleteRelated2()
 
+		//example of everything learned up to this point (creation, persistence, cascade deletion)
+		service.newProduct1();
+		service.newProduct2();
+		service.addProductToWishlist();
+		service.deleteProduct();
 	}
 }
