@@ -116,9 +116,11 @@ public class StoreApplication {
 		//service.deleteRelated2()
 
 		//example of everything learned up to this point (creation, persistence, cascade deletion)
-		service.newProduct1();
-		service.newProduct2();
-		service.addProductToWishlist();
-		service.deleteProduct();
+		//service.newProduct1();
+		//service.newProduct2();
+		//service.addProductToWishlist();
+		//service.deleteProduct();
+
+		service.updateProductPrices();
 	}
 }

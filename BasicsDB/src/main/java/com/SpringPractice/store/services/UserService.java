@@ -146,4 +146,9 @@ public class UserService {
         productRepository.deleteById(1L);//wishlist table foreign key doesn't have a delete action
         //cannot set delete cascade in wishlist relationship since user is owner, must modify db with on delete cascade
     }
+    //testing custom query to update data
+    @Transactional//custom query update requires transactional
+    public void updateProductPrices(){
+        productRepository.updatePriceByCategory(BigDecimal.valueOf(10), (byte) 1);
+    }
 }

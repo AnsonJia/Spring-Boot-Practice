@@ -1,12 +1,16 @@
 package com.SpringPractice.store.repositories;
 
 import com.SpringPractice.store.entities.Product;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductRepository extends CrudRepository<Product, Long> {
+    //Derived Queries/////////////////////////////////////////////////////////////////////////
     // String
     List<Product> findByName(String name);  //select * from products where name = ?
     List<Product> findByNameLike(String name); //select * from products where name like ?
@@ -37,4 +41,29 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     //Limit (Top/First)
     List<Product> findTop5ByNameOrderByPrice(String name);
     List<Product> findFirst5ByNameLikeOrderByPrice(String name);
+
+
+    //Custom Queries////////////////////////////////////////////////////////////////////////////////////////////////
+    //Find products whose prices are in a given range and sort by name
+    List<Product> findByPriceBetweenOrderByName(BigDecimal min, BigDecimal max); //Derived Query method (long name)
+    //SQL or JPQL (JPQL is simpler and universal across different databases but not as advanced)
+
+    //SQL                                                   parameters require : prefix      SQL query needs native Query
+    //@Query(value = "select * from products p where p.price between :min and :max order by p.name", nativeQuery = true)
+    //List<Product> findProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
+    //                          annotate method params for the min and max
+
+    //JPQL     //JPQL uses entities not tables (Product entity) Ctrl + space
+    @Query("select p from Product p join p.category where p.price between :min and :max order by p.name")
+    //we can also generate this from our derived query with JPA buddy (Alt + Enter, extract JPQL query + named params)
+    List<Product> findProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
+
+    //counting all products with prices in a range
+    @Query("select count(*) from Product p where p.price between  :min and :max")
+    long countProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
+
+    //updating the price of all products in a category
+    @Modifying //tells hibernate that it is an update operation not select
+    @Query("update Product p set p.price = :newPrice where p.category.id = :categoryId")
+    void updatePriceByCategory(BigDecimal newPrice, Byte categoryId);
 }
