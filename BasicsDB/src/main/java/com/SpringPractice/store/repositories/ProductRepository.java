@@ -1,5 +1,8 @@
 package com.SpringPractice.store.repositories;
 
+import com.SpringPractice.store.dtos.ProductSummary;
+import com.SpringPractice.store.dtos.ProductSummaryDTO;
+import com.SpringPractice.store.entities.Category;
 import com.SpringPractice.store.entities.Product;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -66,4 +69,19 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     @Modifying //tells hibernate that it is an update operation not select
     @Query("update Product p set p.price = :newPrice where p.category.id = :categoryId")
     void updatePriceByCategory(BigDecimal newPrice, Byte categoryId);
+
+
+    //example of returning a custom DTO (data transfer object) with JPQL.
+    //List<Product> findByCategory(Category category); //fetches all data which may be unnecessary
+    //we can return an interface or a class (interface is more flexible and doesn't require a constructor)
+    //List<ProductSummary> findByCategory(Category category);//uses dto interface to only select id and name
+    //List<ProductSummaryDTO> findByCategory(Category category);//class allows us to encapsulate logic
+
+    //@Query("select p from Product p where p.category = :category") //custom query fetches all data from Product
+    @Query("select p.id, p.name from Product p where p.category = :category") //need to specify id and name in query
+    List<ProductSummary> findByCategory(@Param("category") Category category);
+
+    //when using classes, we need a new instance of the DTO which requires the path (better to use interface, class if you need logic)
+    //@Query("select new com.SpringPractice.store.dtos.ProductSummaryDTO(p.id, p.name) from Product p where p.category = :category")
+    //List<ProductSummaryDTO> findByCategory(@Param("category") Category category);
 }

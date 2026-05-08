@@ -121,6 +121,9 @@ public class StoreApplication {
 		//service.addProductToWishlist();
 		//service.deleteProduct();
 
-		service.updateProductPrices();
+		//demonstrating update using custom queries
+		//service.updateProductPrices();
+
+		service.fetchProducts();
 	}
 }
