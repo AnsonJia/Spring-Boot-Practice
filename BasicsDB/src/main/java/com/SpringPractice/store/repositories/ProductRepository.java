@@ -57,31 +57,34 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     //                          annotate method params for the min and max
 
     //JPQL     //JPQL uses entities not tables (Product entity) Ctrl + space
+    //@Query("select p from Product p join p.category where p.price between :min and :max order by p.name")
+    //JPQL has other features like being able to join with other entities
     @Query("select p from Product p join p.category where p.price between :min and :max order by p.name")
     //we can also generate this from our derived query with JPA buddy (Alt + Enter, extract JPQL query + named params)
     List<Product> findProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
 
-    //counting all products with prices in a range
+    //counting all products with prices in a range (aggregate functions)
     @Query("select count(*) from Product p where p.price between  :min and :max")
     long countProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
 
-    //updating the price of all products in a category
+    //updating the price of all products in a category (updating data)
     @Modifying //tells hibernate that it is an update operation not select
     @Query("update Product p set p.price = :newPrice where p.category.id = :categoryId")
     void updatePriceByCategory(BigDecimal newPrice, Byte categoryId);
 
 
     //example of returning a custom DTO (data transfer object) with JPQL.
-    //List<Product> findByCategory(Category category); //fetches all data which may be unnecessary
+    //List<Product> findByCategory(Category category); //fetches all data from prod and cat (eager loading) which may be unnecessary
     //we can return an interface or a class (interface is more flexible and doesn't require a constructor)
     //List<ProductSummary> findByCategory(Category category);//uses dto interface to only select id and name
     //List<ProductSummaryDTO> findByCategory(Category category);//class allows us to encapsulate logic
 
-    //@Query("select p from Product p where p.category = :category") //custom query fetches all data from Product
-    @Query("select p.id, p.name from Product p where p.category = :category") //need to specify id and name in query
+    //partial data for custom queries
+    //@Query("select p from Product p where p.category = :category") //custom query fetches all data from Product and cat
+    @Query("select p.id, p.name from Product p where p.category = :category") //need to specify individual fields (id and name) in query
     List<ProductSummary> findByCategory(@Param("category") Category category);
 
-    //when using classes, we need a new instance of the DTO which requires the path (better to use interface, class if you need logic)
+    //when using classes, we need a new instance of the DTO which requires the path (better to use interface, class only if you need logic)
     //@Query("select new com.SpringPractice.store.dtos.ProductSummaryDTO(p.id, p.name) from Product p where p.category = :category")
     //List<ProductSummaryDTO> findByCategory(@Param("category") Category category);
 }
