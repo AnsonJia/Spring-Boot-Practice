@@ -154,8 +154,8 @@ public class UserService {
 
 
     //example of fetching partial data with DTO
-    public void fetchProducts(){
-        var products = productRepository.findByCategory(new Category((byte)1));
+    public void fetchProducts(){// call find by cat method from the product repository class
+        var products = productRepository.findByCategory(new Category((byte)1));//creating a new category by id
         products.forEach(System.out::println);
     }
 }
