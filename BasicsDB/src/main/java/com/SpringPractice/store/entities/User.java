@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter //automatic generation of getters
 @AllArgsConstructor //generates constructor to initialize all fields of the class
 @NoArgsConstructor //allows us to generate a default empty constructions without any arg
-@ToString// generates a to string method so output is readable to people
+//@toString// generates a to string method so output is readable to people (override toString for findByEmail in userRepo)
 @Builder //allows us to use builder to initialize an entity
 @Entity //allows us to work with java objects rather than raw SQL
 @Table(name = "users") //hibernate assumes we have a table called User so we need to set the name to "users"
@@ -95,5 +95,13 @@ public class User {
 
     public void addFavouriteProduct(Product product) {//add products to the wishlist
         wishlist.add(product);//uni-directional relationship (product doesn't need to know about users)
+    }
+
+    @Override //override toString to only include the fields we want to print 
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "name = " + name + ", " +
+                "email = " + email + ")";
     }
 }

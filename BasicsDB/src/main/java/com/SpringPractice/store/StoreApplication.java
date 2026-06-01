@@ -124,6 +124,9 @@ public class StoreApplication {
 		//demonstrating update using custom queries
 		//service.updateProductPrices();
 
-		service.fetchProducts();
+		//demonstrating fetching partial data with DTOs
+		//service.fetchProducts();
+
+		service.fetchUser();
 	}
 }

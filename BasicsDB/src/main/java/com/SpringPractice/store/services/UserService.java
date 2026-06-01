@@ -158,4 +158,11 @@ public class UserService {
         var products = productRepository.findByCategory(new Category((byte)1));//creating a new category by id
         products.forEach(System.out::println);
     }
+
+    //example of using EntityGraph to efficiently load entities
+    @Transactional//the to string in User will look at every field including lazy loaded fields (override toString)
+    public void fetchUser(){
+        var user = userRepository.findByEmail("email@gmail.com").orElseThrow();//transaction starts and ends
+        System.out.println(user); //to string tries to access lazy loaded fields but no persistence
+    }
 }
