@@ -80,8 +80,9 @@ public class User {
 
     //one-to-one relation. a user has one profile and every profile is mapped to one user
     //the owner is the name of the field in profile
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)//cascade remove to profile is user is removed
-    private Profile profile;
+    //@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)//cascade remove to profile is user is removed
+    //private Profile profile;
+    //when working with user accounts for auth, we don't care about a users profile, so we can remove this relationship
 
     //lazy loading by default
     @ManyToMany//cannot set delete cascade otherwise if user delete, product delete (user is the owner)

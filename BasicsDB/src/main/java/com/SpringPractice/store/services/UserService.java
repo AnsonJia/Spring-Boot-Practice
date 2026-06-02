@@ -165,4 +165,15 @@ public class UserService {
         var user = userRepository.findByEmail("email@gmail.com").orElseThrow();//transaction starts and ends
         System.out.println(user); //to string tries to access lazy loaded fields but no persistence
     }
+    //example of efficiently lazy loading (n+1 problem)
+    @Transactional
+    public void fetchUsers(){
+        //var users = userRepository.findAll(); )
+        var users = userRepository.findAllWithAddresses();
+        users.forEach(u -> {
+            System.out.println(u);//will also query each user profile because of the relationship (remove relation in User)
+            //n+1 problem: 1 query to fetch all users, then n queries to fetch addresses for each user due to lazy loading
+            u.getAddresses().forEach(System.out::println); //can solve n+1 using eager loading with EntityGraph in userRepo
+        });
+    }
 }

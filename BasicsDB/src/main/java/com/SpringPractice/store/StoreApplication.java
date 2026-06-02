@@ -127,6 +127,9 @@ public class StoreApplication {
 		//demonstrating fetching partial data with DTOs
 		//service.fetchProducts();
 
-		service.fetchUser();
+		//demonstrating efficient eager loading of entities
+		//service.fetchUser();
+
+		service.fetchUsers();
 	}
 }
