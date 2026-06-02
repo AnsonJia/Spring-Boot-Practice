@@ -6,6 +6,7 @@ import com.SpringPractice.store.entities.Category;
 import com.SpringPractice.store.entities.Product;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -59,8 +60,15 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     //JPQL     //JPQL uses entities not tables (Product entity) Ctrl + space
     //@Query("select p from Product p join p.category where p.price between :min and :max order by p.name")
     //JPQL has other features like being able to join with other entities
-    @Query("select p from Product p join p.category where p.price between :min and :max order by p.name")
+    //@Query("select p from Product p join p.category where p.price between :min and :max order by p.name")
     //we can also generate this from our derived query with JPA buddy (Alt + Enter, extract JPQL query + named params)
+    //List<Product> findProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
+
+    //Example of using Stored Procedures (MYSQL version)
+    //@Procedure("findProductsByPrice")
+    //List<Product> findProducts(BigDecimal min, BigDecimal max);
+    //PostgreSQL version
+    @Query(value = "SELECT * FROM findProductsByPrice(:min, :max)", nativeQuery = true)
     List<Product> findProducts(@Param("min") BigDecimal min, @Param("max") BigDecimal max);
 
     //counting all products with prices in a range (aggregate functions)

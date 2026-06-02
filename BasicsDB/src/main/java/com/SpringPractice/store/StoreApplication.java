@@ -130,6 +130,7 @@ public class StoreApplication {
 		//demonstrating efficient eager loading of entities
 		//service.fetchUser();
 
-		service.fetchUsers();
+		//service.fetchUsers();
+		service.fetchProducts2();
 	}
 }

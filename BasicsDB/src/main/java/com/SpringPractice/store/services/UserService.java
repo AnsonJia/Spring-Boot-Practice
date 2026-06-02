@@ -158,6 +158,12 @@ public class UserService {
         var products = productRepository.findByCategory(new Category((byte)1));//creating a new category by id
         products.forEach(System.out::println);
     }
+    //@Transactional //Mysql using @Procedure (in Product Repository) requires a transactional
+    //Example of using stored procedures/functions
+    public void fetchProducts2(){// call find by cat method from the product repository class
+        var products = productRepository.findProducts(BigDecimal.valueOf(1), BigDecimal.valueOf(15));//creating a new category by id
+        products.forEach(System.out::println);
+    }
 
     //example of using EntityGraph to efficiently load entities
     @Transactional//the to string in User will look at every field including lazy loaded fields (override toString)
