@@ -182,4 +182,20 @@ public class UserService {
             u.getAddresses().forEach(System.out::println); //can solve n+1 using eager loading with EntityGraph in userRepo
         });
     }
+    //practice for writing custom queries
+    @Transactional
+    public void printLoyalProfiles(){ //basics using derived query
+        var profiles = profileRepository.findByLoyaltyPointsGreaterThanOrderByUserEmail(2);
+        profiles.forEach(p-> System.out.println(p.getId() + ": " + p.getUser().getEmail()));
+    }
+    @Transactional
+    public void printLoyalProfiles2(){ //using custom query and dto interface
+        var profiles = profileRepository.findLoyalProfiles(2);
+        profiles.forEach(p-> System.out.println(p.getId() + ": " + p.getEmail()));
+    }
+    @Transactional
+    public void printLoyalProfiles3(){ //moved method to UserRepository
+        var users = userRepository.findLoyalUsers(2);
+        users.forEach(p-> System.out.println(p.getId() + ": " + p.getEmail()));
+    }
 }

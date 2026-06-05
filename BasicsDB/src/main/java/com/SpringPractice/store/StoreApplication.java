@@ -133,8 +133,11 @@ public class StoreApplication {
 		//service.fetchUsers();
 
 		//demonstrating mysql stored procedure/ PostgreSQL function
-		service.fetchProducts2();
+		//service.fetchProducts2();
 
-
+		//final practice example of writing custom queries
+		service.printLoyalProfiles();
+		service.printLoyalProfiles2();
+		service.printLoyalProfiles3();
 	}
 }
