@@ -129,8 +129,12 @@ public class StoreApplication {
 
 		//demonstrating efficient eager loading of entities
 		//service.fetchUser();
-
+		//demonstrating efficient lazy loading (n+1 problem)
 		//service.fetchUsers();
+
+		//demonstrating mysql stored procedure/ PostgreSQL function
 		service.fetchProducts2();
+
+
 	}
 }
