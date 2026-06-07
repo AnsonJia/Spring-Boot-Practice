@@ -169,7 +169,7 @@ public class UserService {
 
     //example of dynamic queries with query by example
     @Transactional
-    public void fetchProducts3(){
+    public void fetchProductsQueryByExample(){
         var product = new Product();
         // set fields we want to use to finding products
         product.setName("Product"); //PostgreSQL is case-sensitive, MySQL is not

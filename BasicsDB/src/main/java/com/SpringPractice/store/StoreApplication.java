@@ -1,10 +1,5 @@
 package com.SpringPractice.store;
 
-import com.SpringPractice.store.entities.Address;
-import com.SpringPractice.store.entities.Profile;
-import com.SpringPractice.store.entities.Tag;
-import com.SpringPractice.store.entities.User;
-import com.SpringPractice.store.repositories.UserRepository;
 import com.SpringPractice.store.services.UserService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -141,6 +136,6 @@ public class StoreApplication {
 		//service.printLoyalProfiles3();
 
 		//example of building dynamic queries using query by example (build query dynamically based on values of example object)
-		service.fetchProducts3();
+		service.fetchProductsQueryByExample();
 	}
 }
