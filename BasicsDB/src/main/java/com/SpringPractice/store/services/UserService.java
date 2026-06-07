@@ -8,6 +8,8 @@ import com.SpringPractice.store.repositories.*;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -163,6 +165,28 @@ public class UserService {
     public void fetchProducts2(){// call find by cat method from the product repository class
         var products = productRepository.findProducts(BigDecimal.valueOf(1), BigDecimal.valueOf(15));//creating a new category by id
         products.forEach(System.out::println);
+    }
+
+    //example of dynamic queries with query by example
+    @Transactional
+    public void fetchProducts3(){
+        var product = new Product();
+        // set fields we want to use to finding products
+        product.setName("Product"); //PostgreSQL is case-sensitive, MySQL is not
+        //create a matching object to customize the matching behavior
+        var matcher = ExampleMatcher.matching() //returns an ExampleMatcher object like a Builder object
+                .withIncludeNullValues() //show fields with null values (usually ignored)
+                .withIgnorePaths("id", "description")// we can exclude fields
+                .withIgnoreCase() //ignore case
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);//string matcher containing the example name (like operator)
+        //create an example product with the product name
+        var example = Example.of(product, matcher); //default will use exact matching. Matcher allows custom matching
+        //pass example to repository to find all products that are similar to the example product (needs JpaRepository)
+        var products = productRepository.findAll(example);//get products that match example
+        products.forEach(System.out::println);
+        //limitation:
+        //no nested properties, collections/maps, string matching is database specific
+        // only exact matching for all other types (num/dates, etc) cant find price within a range
     }
 
     //example of using EntityGraph to efficiently load entities

@@ -4,6 +4,7 @@ import com.SpringPractice.store.dtos.ProductSummary;
 import com.SpringPractice.store.dtos.ProductSummaryDTO;
 import com.SpringPractice.store.entities.Category;
 import com.SpringPractice.store.entities.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -12,8 +13,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-public interface ProductRepository extends CrudRepository<Product, Long> {
+//Jpa repository expands on crud giving us some extra features (findAll(example) - finding by example)
+public interface ProductRepository extends JpaRepository<Product, Long> {
     //Derived Queries/////////////////////////////////////////////////////////////////////////
     // String
     List<Product> findByName(String name);  //select * from products where name = ?

@@ -136,8 +136,11 @@ public class StoreApplication {
 		//service.fetchProducts2();
 
 		//final practice example of writing custom queries
-		service.printLoyalProfiles();
-		service.printLoyalProfiles2();
-		service.printLoyalProfiles3();
+		//service.printLoyalProfiles();
+		//service.printLoyalProfiles2();
+		//service.printLoyalProfiles3();
+
+		//example of building dynamic queries using query by example (build query dynamically based on values of example object)
+		service.fetchProducts3();
 	}
 }
