@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.util.List;
 //Jpa repository expands on crud giving us some extra features (findAll(example) - finding by example)
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> , ProductCriteriaRepository{//extend PCR for function
     //Derived Queries/////////////////////////////////////////////////////////////////////////
     // String
     List<Product> findByName(String name);  //select * from products where name = ?

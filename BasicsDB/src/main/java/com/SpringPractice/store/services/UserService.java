@@ -188,6 +188,14 @@ public class UserService {
         //no nested properties, collections/maps, string matching is database specific
         // only exact matching for all other types (num/dates, etc) cant find price within a range
     }
+    //example of dynamic queries with criteria conditions that can change at runtime
+    public void fetchProductsByCriteria(){
+        //get all the products by the criteria values provided (all the values are optional)
+        var products = productRepository.findProductsByCriteria(null, BigDecimal.valueOf(1), BigDecimal.valueOf(10));
+        //Hibernate things findProductsByCriteria is a derived query but Product doesn't have a field called criteria
+        // we need to override the function and implement it in the PCRImpl file
+        products.forEach(System.out::println);
+    }
 
     //example of using EntityGraph to efficiently load entities
     @Transactional//the to string in User will look at every field including lazy loaded fields (override toString)

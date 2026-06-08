@@ -136,6 +136,9 @@ public class StoreApplication {
 		//service.printLoyalProfiles3();
 
 		//example of building dynamic queries using query by example (build query dynamically based on values of example object)
-		service.fetchProductsQueryByExample();
+		//service.fetchProductsQueryByExample();
+
+		//example of building dynamic queries using criteria API (build query based on criteria conditions at runtime)
+		service.fetchProductsByCriteria();
 	}
 }
