@@ -5,11 +5,13 @@ import com.SpringPractice.store.entities.Category;
 import com.SpringPractice.store.entities.Product;
 import com.SpringPractice.store.entities.User;
 import com.SpringPractice.store.repositories.*;
+import com.SpringPractice.store.repositories.specifications.ProductSpec;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -195,6 +197,22 @@ public class UserService {
         //Hibernate things findProductsByCriteria is a derived query but Product doesn't have a field called criteria
         // we need to override the function and implement it in the PCRImpl file
         products.forEach(System.out::println);
+    }
+    //example of dynamic query with specification api (built on top criteria, structured way to create reusable and composable queries)
+    public void fetchProductsBySpecifications(String name, BigDecimal minPrice,  BigDecimal maxPrice){
+        Specification<Product> spec = Specification.where(null);//start with null specification (neutral starting point)
+        //check if params are null, if not, add to spec with ".and"
+        if(name != null){
+            spec = spec.and(ProductSpec.hasName(name));
+        }
+        if (minPrice != null){
+            spec = spec.and(ProductSpec.hasPriceGreaterThanOrEqualTo(minPrice));
+        }
+        if (maxPrice != null){
+            spec = spec.and(ProductSpec.hasPriceLessThanOrEqualTo(maxPrice));
+        }
+        //find all products in repo that follow the spec and print out
+        productRepository.findAll(spec).forEach(System.out::println);
     }
 
     //example of using EntityGraph to efficiently load entities

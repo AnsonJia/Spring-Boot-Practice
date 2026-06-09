@@ -5,6 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import java.math.BigDecimal;
+
 @SpringBootApplication
 public class StoreApplication {
 
@@ -139,6 +141,10 @@ public class StoreApplication {
 		//service.fetchProductsQueryByExample();
 
 		//example of building dynamic queries using criteria API (build query based on criteria conditions at runtime)
-		service.fetchProductsByCriteria();
+		//service.fetchProductsByCriteria();
+
+		//criteria can be very lengthy and not very reusable across different queries
+		//example of dymanic queries using specifications (build query based on reusable specification objects)
+		service.fetchProductsBySpecifications("prod", BigDecimal.valueOf(1), null);//parameters are optional
 	}
 }
