@@ -145,6 +145,11 @@ public class StoreApplication {
 
 		//criteria can be very lengthy and not very reusable across different queries
 		//example of dymanic queries using specifications (build query based on reusable specification objects)
-		service.fetchProductsBySpecifications("prod", BigDecimal.valueOf(1), null);//parameters are optional
+		//service.fetchProductsBySpecifications("prod", BigDecimal.valueOf(1), null);//parameters are optional
+
+		//example of fetching sorted and paginated data (JpaRepository extends PagingAndSortingRepository, crud does not)
+		//sometimes we don't want to load everything at once but rather chunks or in a specific order
+		service.fetchSortedProducts();
+		service.fetchPaginatedProducts(0,10);
 	}
 }

@@ -9,8 +9,7 @@ import com.SpringPractice.store.repositories.specifications.ProductSpec;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -213,6 +212,31 @@ public class UserService {
         }
         //find all products in repo that follow the spec and print out
         productRepository.findAll(spec).forEach(System.out::println);
+    }
+    //example of fetching sorted products
+    public void fetchSortedProducts(){
+        //var sort = Sort.by("name", "price").descending(); //by default is ascending
+        //we can also sort in different directions for different columns
+        var sort = Sort.by("name").and( //ascending
+                Sort.by("price").descending() //descending
+        );
+        //pass the sort to the find all of the product repo and print results
+        //since JpaRepository extends PagingAndSortingRepository, it contains multiple overloads for find all including sort
+        productRepository.findAll(sort).forEach(System.out::println);
+    }
+    //example of fetching paginated products
+    public void fetchPaginatedProducts(int pageNumber, int size){
+        PageRequest pageRequest = PageRequest.of(pageNumber, size); //create a pageable object (page number always starts with 0)
+        Page<Product> page = productRepository.findAll(pageRequest);//overload method for find all Pageable object
+
+        var products = page.getContent(); //getting the products on the page
+        products.forEach(System.out::println);
+        //select x from products p1_0 offset ? rows fetch first ? rows only (offset from 0/page number, fetch rows after offset)
+
+        var totalPages = page.getTotalPages(); //total pages
+        var totalElements = page.getTotalElements(); //total products in database
+        System.out.println("Total Pages: " + totalPages);
+        System.out.println("Total Elements: " + totalElements);
     }
 
     //example of using EntityGraph to efficiently load entities
