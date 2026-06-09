@@ -1,55 +1,64 @@
 CREATE TABLE addresses
 (
-    id      BIGINT AUTO_INCREMENT NOT NULL,
+    id      bigint generated always as identity primary key,
+    --id      BIGINT AUTO_INCREMENT NOT NULL,
     street  VARCHAR(255) NOT NULL,
     city    VARCHAR(255) NOT NULL,
     state   VARCHAR(255) NOT NULL,
     zip     VARCHAR(255) NOT NULL,
-    user_id BIGINT       NOT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    user_id BIGINT       NOT NULL
+    --CONSTRAINT `PRIMARY` PRIMARY KEY (id)
 );
-
 CREATE TABLE categories
 (
-    id   TINYINT AUTO_INCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    --id   TINYINT AUTO_INCREMENT NOT NULL,
+    id   SMALLINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+    --CONSTRAINT `PRIMARY` PRIMARY KEY (id)
 );
 
 CREATE TABLE products
 (
-    id            BIGINT AUTO_INCREMENT NOT NULL,
+    --id            BIGINT AUTO_INCREMENT NOT NULL,
+    id            BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name          VARCHAR(255)   NOT NULL,
     price         DECIMAL(10, 2) NOT NULL,
-    `description` LONGTEXT       NOT NULL,
-    category_id   TINYINT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    --description` LONGTEXT       NOT NULL,
+    description   TEXT           NOT NULL,
+    --category_id   TINYINT NULL,
+    category_id   SMALLINT NULL
+    --CONSTRAINT `PRIMARY` PRIMARY KEY (id)
 );
 
 CREATE TABLE profiles
 (
     id             BIGINT NOT NULL,
-    bio            LONGTEXT NULL,
+    --bio            LONGTEXT NULL,
+    bio            TEXT NULL,
     phone_number   VARCHAR(15) NULL,
     date_of_birth  date NULL,
-    loyalty_points INT UNSIGNED DEFAULT 0 NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    --loyalty_points INT UNSIGNED DEFAULT 0 NULL,
+    loyalty_points INTEGER DEFAULT 0 CHECK (loyalty_points >= 0) NULL,
+    --CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE users
 (
-    id       BIGINT AUTO_INCREMENT NOT NULL,
+    id       BIGINT generated always as identity primary key,
+    --id       BIGINT AUTO_INCREMENT NOT NULL,
     name     VARCHAR(255) NOT NULL,
-    email    VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (id)
+    email    VARCHAR(255) NOT NULL UNIQUE, --added a unique email constraint
+    password VARCHAR(255) NOT NULL
+    --CONSTRAINT `PRIMARY` PRIMARY KEY (id)
 );
 
 CREATE TABLE wishlist
 (
     product_id BIGINT NOT NULL,
     user_id    BIGINT NOT NULL,
-    CONSTRAINT `PRIMARY` PRIMARY KEY (product_id, user_id)
+    --CONSTRAINT `PRIMARY` PRIMARY KEY (product_id, user_id)
+    PRIMARY KEY (product_id, user_id)
 );
 
 ALTER TABLE addresses
