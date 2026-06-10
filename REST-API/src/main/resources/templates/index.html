@@ -1,12 +1,12 @@
-<!--static html page SSR-->
+<!--dynamic html page SSR (by default spring looks for Thymeleaf templates in the templates directory)-->
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" > <!--define namespace (we will use attributes starting with th defined by the website)-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <h1 th:text="'Hello ' + ${name}"></h1><!--set text of HTML dynamically-->
 </body>
 </html>
