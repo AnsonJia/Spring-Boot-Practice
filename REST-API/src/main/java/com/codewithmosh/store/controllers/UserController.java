@@ -3,6 +3,8 @@ package com.codewithmosh.store.controllers;
 import com.codewithmosh.store.entities.User;
 import com.codewithmosh.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +24,15 @@ public class UserController {
         return userRepository.findAll();//get all users in database
     };
     //get user by their id given by the path variable/url param
-    @GetMapping("/{id}")//because id is a param, we need {}
-    public User getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).orElse(null);
+    @GetMapping("/{id}")//because id is a param, we need {} and @PathVariable for the variable
+    public ResponseEntity<User> getUserById(@PathVariable Long id) { //response entity allows us to customize our responses
+        var user =  userRepository.findById(id).orElse(null);
+        if (user == null) {// if null, return status 404 not found
+            //return new ResponseEntity<>(HttpStatus.NOT_FOUND); //one method but more verbose and creates new ResponseEntity
+            return ResponseEntity.notFound().build(); //static factory methods inside of response entity are cleaner
+        }
+        //if not null, return status 200 and the user
+        //return new ResponseEntity<>(user, HttpStatus.OK);
+        return ResponseEntity.ok(user);
     }
 }
