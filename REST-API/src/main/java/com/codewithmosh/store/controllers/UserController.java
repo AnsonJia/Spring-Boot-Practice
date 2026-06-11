@@ -1,5 +1,6 @@
 package com.codewithmosh.store.controllers;
 
+import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.entities.User;
 import com.codewithmosh.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,12 +21,18 @@ public class UserController {
     // method: GET, POST, PUT, DELETE
     //@RequestMapping("/users") //default uses the GET method (GetMapping also works and is more consice/shorter)
     @GetMapping
-    public Iterable<User> getAllUsers() { //repository returns an Iterable object
-        return userRepository.findAll();//get all users in database
+    public Iterable<UserDto> getAllUsers() { //repository returns an Iterable object
+        //return userRepository.findAll(); //exposes all the data to clients (use DTOs)
+        //use the stream api to map user objects to user dtos
+        return userRepository.findAll()
+                .stream()
+                //map user to user dto and convert to list
+                .map(user -> new UserDto(user.getId(), user.getName(), user.getEmail()))
+                .toList();//get all users in database
     };
     //get user by their id given by the path variable/url param
     @GetMapping("/{id}")//because id is a param, we need {} and @PathVariable for the variable
-    public ResponseEntity<User> getUserById(@PathVariable Long id) { //response entity allows us to customize our responses
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) { //response entity allows us to customize our responses
         var user =  userRepository.findById(id).orElse(null);
         if (user == null) {// if null, return status 404 not found
             //return new ResponseEntity<>(HttpStatus.NOT_FOUND); //one method but more verbose and creates new ResponseEntity
@@ -33,6 +40,8 @@ public class UserController {
         }
         //if not null, return status 200 and the user
         //return new ResponseEntity<>(user, HttpStatus.OK);
-        return ResponseEntity.ok(user);
+        //return ResponseEntity.ok(user); //exposes all the data to clients (use DTOs)
+        var userDto = new UserDto(user.getId(), user.getName(), user.getEmail()); //first create userDto and put in response
+        return ResponseEntity.ok(userDto);
     }
 }
