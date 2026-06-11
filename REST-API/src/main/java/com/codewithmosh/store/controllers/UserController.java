@@ -26,7 +26,7 @@ public class UserController {
         //use the stream api to map user objects to user dtos
         return userRepository.findAll()
                 .stream()
-                //map user to user dto and convert to list
+                //map user to user dto and convert to list (if we change user entity, we just need to update mapping)
                 .map(user -> new UserDto(user.getId(), user.getName(), user.getEmail()))
                 .toList();//get all users in database
     };
