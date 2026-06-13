@@ -21,9 +21,14 @@ public class UserController {
     //@RequestMapping("/users") //default uses the GET method (GetMapping also works and is more consice/shorter)
     @GetMapping
     public Iterable<UserDto> getAllUsers(
+            //headers are often used for metadata (authentication, caching, etc.)
+            //@RequestHeader(required = false, name = "x-auth-token") String authToken, //convention custom headers with x-
+
             //annotation for a query request param (set required to false for optional and if no sort field provided, default is empty string)
             @RequestParam(required = false, defaultValue = "", name = "sort") String sortBy //name binds query parameter "sort" to method parameter sortBy
     ) { //repository returns an Iterable object
+
+        //System.out.println(authToken);
 
         //check if sort field is valid, otherwise sort by name
         if (!Set.of("name", "email").contains(sortBy)) //because contains cannot take null, set default value to empty string
