@@ -106,4 +106,14 @@ public class UserController {
 
         return ResponseEntity.ok(userMapper.toDto(user));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        var user = userRepository.findById(id).orElse(null); //check if user exists
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build(); //status 204 no content because we don't have anything to return
+    }
 }
