@@ -1,6 +1,7 @@
 package com.codewithmosh.store.controllers;
 
 import com.codewithmosh.store.dtos.RegisterUserRequest;
+import com.codewithmosh.store.dtos.UpdateUserRequest;
 import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
@@ -70,7 +71,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(//response entity to modify response status
-            @RequestBody RegisterUserRequest request,//use the RegisterUserRequest dto
+            @RequestBody RegisterUserRequest request,//to read the request body using the RegisterUserRequest dto
             UriComponentsBuilder uriBuilder //uri builder for the location of the new resource created
     ) {
         var user = userMapper.toEntity(request); //map the request to an entity so we can work with it
@@ -85,5 +86,24 @@ public class UserController {
         //if we don't care about Restful conventions (proper return status)
         //return userDto;     or
         //return ResponseEntity.ok(userDto);
+    }
+
+    @PutMapping("{id}") //put for updating/replacing resource, patch for patching/updating properties
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name = "id") Long id, //path variable for the user id we want to update
+            @RequestBody UpdateUserRequest request //to read the request body using the UpdateUserRequest dto
+    ) {
+        var user = userRepository.findById(id).orElse(null);//check is the user exists
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        //we could set the fields manually or use the mapper to update the user entity with the request data
+        //user.setName(request.getName());
+        //user.setEmail(request.getEmail());
+
+        userMapper.update(request, user); //map the request to the existing user entity (update user entity with the request data)
+        userRepository.save(user); //save the updated user to the db
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }
