@@ -1,5 +1,6 @@
 package com.codewithmosh.store.controllers;
 
+import com.codewithmosh.store.dtos.RegisterUserRequest;
 import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Set;
 
@@ -63,5 +65,25 @@ public class UserController {
 
         // no need to create a userDto for mapper
         return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(//response entity to modify response status
+            @RequestBody RegisterUserRequest request,//use the RegisterUserRequest dto
+            UriComponentsBuilder uriBuilder //uri builder for the location of the new resource created
+    ) {
+        var user = userMapper.toEntity(request); //map the request to an entity so we can work with it
+        userRepository.save(user); //save user to db
+
+        var userDto = userMapper.toDto(user); //map the user to a dto
+        //build the uri location path with the path of the user and provide the id of the user as an argument
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(userDto);//return the userDto and status 201 (created)
+
+        //if we don't care about Restful conventions (proper return status)
+        //return userDto;     or
+        //return ResponseEntity.ok(userDto);
     }
 }
