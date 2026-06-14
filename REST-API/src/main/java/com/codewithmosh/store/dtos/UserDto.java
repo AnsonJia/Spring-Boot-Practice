@@ -19,8 +19,13 @@ public class UserDto {
     private Long id;
     private String name;
     private String email;
+
     //@JsonInclude(JsonInclude.Include.NON_NULL)//only include field in response if not null (if we want to conditionally include it)
     //private String phoneNumber; //phone num col doesn't exist in db, so it will be null
+
     //@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")//change the format of the date, time, numbers in the JSON response
     //private LocalDateTime createdAt;
+
+    //@JsonIgnore// applied both at serialization and de-serialization so cannot read JSON request to put in dto either
+    //private String password; //will not be in dto, make a new dto for registering user that includes password and then map to this dto without the password field
 }
