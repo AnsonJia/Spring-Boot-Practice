@@ -88,7 +88,7 @@ public class UserController {
         //return ResponseEntity.ok(userDto);
     }
 
-    @PutMapping("{id}") //put for updating/replacing resource, patch for patching/updating properties
+    @PutMapping("/{id}") //put for updating/replacing resource, patch for patching/updating properties
     public ResponseEntity<UserDto> updateUser(
             @PathVariable(name = "id") Long id, //path variable for the user id we want to update
             @RequestBody UpdateUserRequest request //to read the request body using the UpdateUserRequest dto
