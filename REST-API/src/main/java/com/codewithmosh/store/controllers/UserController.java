@@ -1,5 +1,6 @@
 package com.codewithmosh.store.controllers;
 
+import com.codewithmosh.store.dtos.ChangePasswordRequest;
 import com.codewithmosh.store.dtos.RegisterUserRequest;
 import com.codewithmosh.store.dtos.UpdateUserRequest;
 import com.codewithmosh.store.dtos.UserDto;
@@ -7,6 +8,7 @@ import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -19,8 +21,9 @@ import java.util.Set;
 public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;// add userMapper field
-
     // method: GET, POST, PUT, DELETE
+
+    //get all users from database
     //@RequestMapping("/users") //default uses the GET method (GetMapping also works and is more consice/shorter)
     @GetMapping
     public Iterable<UserDto> getAllUsers(
@@ -69,6 +72,7 @@ public class UserController {
     }
 
 
+    //creating a new user
     @PostMapping
     public ResponseEntity<UserDto> createUser(//response entity to modify response status
             @RequestBody RegisterUserRequest request,//to read the request body using the RegisterUserRequest dto
@@ -88,7 +92,9 @@ public class UserController {
         //return ResponseEntity.ok(userDto);
     }
 
-    @PutMapping("/{id}") //put for updating/replacing resource, patch for patching/updating properties
+
+    //update user info
+    @PutMapping("/{id}") //put for updating/replacing resource, patch for patching/updating partial resources/properties (one field)
     public ResponseEntity<UserDto> updateUser(
             @PathVariable(name = "id") Long id, //path variable for the user id we want to update
             @RequestBody UpdateUserRequest request //to read the request body using the UpdateUserRequest dto
@@ -107,13 +113,35 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
+
+    //deleting a user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) { //void because we are not returning anything in response
         var user = userRepository.findById(id).orElse(null); //check if user exists
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
         userRepository.delete(user);
         return ResponseEntity.noContent().build(); //status 204 no content because we don't have anything to return
+    }
+
+
+    //change user password
+    @PostMapping("/{id}/change-password")//we use post because are creating a request to perform an action (validate old password and update)
+    public ResponseEntity<Void> changePassword( //void because we are not returning anything in response
+            @PathVariable Long id,
+            @RequestBody ChangePasswordRequest request //read the request body
+    ){
+        var user = userRepository.findById(id).orElse(null); //check if user exists
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (!user.getPassword().equals(request.getOldPassword())) { //validate the users old password matches with the request
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); //no factory method for unauthorized so set manually
+        }
+        user.setPassword(request.getNewPassword());//if passwords match, update password field no mapper needed (only for larger objects)
+        userRepository.save(user);
+
+        return ResponseEntity.noContent().build();
     }
 }
