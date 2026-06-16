@@ -6,13 +6,17 @@ import com.codewithmosh.store.dtos.UpdateUserRequest;
 import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -73,9 +77,10 @@ public class UserController {
 
 
     //creating a new user
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(//response entity to modify response status
-            @RequestBody RegisterUserRequest request,//to read the request body using the RegisterUserRequest dto
+    @PostMapping//not valid will throw a MethodArgumentNotValidException and needs to be handled, but not inside here because it won't get called
+    public ResponseEntity<UserDto> createUser(//response entity to modify response status code
+            //annotate with valid to validate the request body before the method gets called and return 400 bad request if invalid
+            @Valid @RequestBody RegisterUserRequest request,//to read the request body using the RegisterUserRequest dto
             UriComponentsBuilder uriBuilder //uri builder for the location of the new resource created
     ) {
         var user = userMapper.toEntity(request); //map the request to an entity so we can work with it
@@ -143,5 +148,17 @@ public class UserController {
         userRepository.save(user);
 
         return ResponseEntity.noContent().build();
+    }
+
+    //method for handling validation errors thrown by the @Valid annotation to provide meaningful error messages to client
+    @ExceptionHandler(MethodArgumentNotValidException.class) //argument is the type of exception we want to handle
+    public ResponseEntity<Map<String,String>> handleValidationErrors(MethodArgumentNotValidException exception){
+        //we want to return in the format "name": "Name is required" Map<String, String>
+        var errors = new HashMap<String, String>();
+        //loop through each error and add it to the map
+        exception.getBindingResult().getFieldErrors().forEach((error) -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);//return the map of errors
     }
 }
