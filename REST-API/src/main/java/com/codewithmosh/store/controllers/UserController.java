@@ -150,15 +150,4 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    //method for handling validation errors thrown by the @Valid annotation to provide meaningful error messages to client
-    @ExceptionHandler(MethodArgumentNotValidException.class) //argument is the type of exception we want to handle
-    public ResponseEntity<Map<String,String>> handleValidationErrors(MethodArgumentNotValidException exception){
-        //we want to return in the format "name": "Name is required" Map<String, String>
-        var errors = new HashMap<String, String>();
-        //loop through each error and add it to the map
-        exception.getBindingResult().getFieldErrors().forEach((error) -> {
-            errors.put(error.getField(), error.getDefaultMessage());
-        });
-        return ResponseEntity.badRequest().body(errors);//return the map of errors
-    }
 }
