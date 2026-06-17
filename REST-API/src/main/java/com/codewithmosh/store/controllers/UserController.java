@@ -11,12 +11,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -78,7 +75,7 @@ public class UserController {
 
     //creating a new user
     @PostMapping//not valid will throw a MethodArgumentNotValidException and needs to be handled, but not inside here because it won't get called
-    public ResponseEntity<UserDto> createUser(//response entity to modify response status code
+    public ResponseEntity<UserDto> registerUser(//response entity to modify response status code
             //annotate with valid to validate the request body before the method gets called and return 400 bad request if invalid
             @Valid @RequestBody RegisterUserRequest request,//to read the request body using the RegisterUserRequest dto
             UriComponentsBuilder uriBuilder //uri builder for the location of the new resource created
