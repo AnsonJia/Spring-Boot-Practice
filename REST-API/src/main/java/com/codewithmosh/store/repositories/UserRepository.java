@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 
 //using JpaRepository so findAll returns a list
 public interface UserRepository extends JpaRepository<User, Long> {
+    boolean existsByEmail(String email); //derived query method
 }
