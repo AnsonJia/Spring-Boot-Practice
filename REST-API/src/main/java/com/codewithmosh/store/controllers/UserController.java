@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -75,11 +76,19 @@ public class UserController {
 
     //creating a new user
     @PostMapping//not valid will throw a MethodArgumentNotValidException and needs to be handled, but not inside here because it won't get called
-    public ResponseEntity<UserDto> registerUser(//response entity to modify response status code
+    public ResponseEntity<?> registerUser(//response entity to modify response status code. ? makes method return flexible
             //annotate with valid to validate the request body before the method gets called and return 400 bad request if invalid
             @Valid @RequestBody RegisterUserRequest request,//to read the request body using the RegisterUserRequest dto
             UriComponentsBuilder uriBuilder //uri builder for the location of the new resource created
     ) {
+        //validating business rules (email must be unique) that requires querying the database
+        // we don't use custom validation because otherwise it would trigger db query every request which is inefficient
+        if (userRepository.existsByEmail(request.getEmail())){//if email exists, return 400 bad request with error message
+            return ResponseEntity.badRequest().body(
+                    Map.of("email", "email is already registered")//provide meaningful error message to client
+            ); //doesn't return a UserDto so edit method param with ? for flexible return
+        }
+
         var user = userMapper.toEntity(request); //map the request to an entity so we can work with it
         userRepository.save(user); //save user to db
 
