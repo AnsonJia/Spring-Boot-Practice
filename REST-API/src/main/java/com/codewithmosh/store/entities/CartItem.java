@@ -29,10 +29,10 @@ public class CartItem {
     private Cart cart;
 
     //@NotNull
-    @ManyToOne//(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne//(fetch = FetchType.LAZY, optional = false) //when one object on one end of relationship (@xToOne) it will be eager loaded
     //@OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "product_id")//, nullable = false)
-    private Product product;
+    private Product product; //because of eager loading, fetching cart items will also fetch products
 
     //@NotNull
     //@ColumnDefault("1") //defined in the database
