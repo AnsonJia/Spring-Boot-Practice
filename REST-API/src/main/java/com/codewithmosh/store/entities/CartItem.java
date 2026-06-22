@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
+
 //create entities if db tables exists using jpa buddy (rmb entities, new, JPA entities from db, select tables, check references, generate)
 //with database first workflow, entities are cleaner because we don't need database schema annotations (@OnDelete, @ColumnDefault, etc)
 @Getter //we don't use @Data for entities because it also includes @toString which can cause issues with lazy loaded fields
@@ -37,5 +39,8 @@ public class CartItem {
     @Column(name = "quantity")//, nullable = false)
     private Integer quantity;
 
-
+    //calculation is a part of domain logic, so we have to implement it in the entity (instead of storing it in the database)
+    public BigDecimal getTotalPrice() {//doesn't match any name in our dto, we need custom mapping in cart mapper
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    }
 }
