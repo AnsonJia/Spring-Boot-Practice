@@ -28,8 +28,9 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
     @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE) //to fix use merge for updating because this is an existing cart
     private Set<CartItem> items = new LinkedHashSet<>();//rename cartItems to items so mapper can auto map to dto field
 
-    //calculation is a part of domain logic, so we have to implement it in the entity
+    //calculation is a part of business logic, so we have to implement it in our domain model (entity)
     public BigDecimal getTotalPrice() { //doesn't match any name in our dto, we need custom mapping in cart mapper
+        //loop over each item and add their total price together
         return items.stream()
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add); //[10, 20, 30], then reduce to a single number starting with 0 and add each number
