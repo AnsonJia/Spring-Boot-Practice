@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class CartItemDto { //new dto for addToCart endpoint response
     private CartProductDto product; //separate dto for product details in cart item response (in case ProductDto changes)
     private int quantity;
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice;//need to calculate total price in CartItem or will be null
 
     /* ex response
     {
