@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class CartItemDto { //new dto for addToCart endpoint response
-    private CartProductDto product; //new dto for including product details in cart item response
+    private CartProductDto product; //separate dto for product details in cart item response (in case ProductDto changes)
     private int quantity;
     private BigDecimal totalPrice;
 
