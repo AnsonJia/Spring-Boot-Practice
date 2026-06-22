@@ -9,7 +9,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CartMapper {
-    CartDto toDto(Cart cart);
+    //@Mapping(target = "items", source = "items")//map cartItems in cart entity to items in dto (don't need mapping if source and target fields are the same)
+    @Mapping(target = "totalPrice", expression = "java(cart.getTotalPrice())")//map totalPrice in dto to getTotalPrice() method in cart entity
+    CartDto toDto(Cart cart); //mapper impl only maps id, not items or total price
 
     //map total price to get total price from cart item entity
     @Mapping(target = "totalPrice", expression = "java(cartItem.getTotalPrice())")// dto field maps to the method in cartItem
