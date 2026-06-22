@@ -42,7 +42,9 @@ public class CartController {
             @PathVariable UUID cartId,
             @RequestBody AddItemToCartRequest request //request dto for adding items to cart (product id)
     ){
-        var cart = cartRepository.findById(cartId).orElse(null); //check if cartId is valid/exists
+        //var cart = cartRepository.findById(cartId).orElse(null); //check if cartId is valid/exists
+        var cart = cartRepository.getCartWithItems(cartId).orElse(null);//updated with new custom query method (functionally same as findById)
+
         if (cart == null) {
             return ResponseEntity.notFound().build(); //if not found return 404 not found
         }
@@ -72,10 +74,9 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}")
-    public ResponseEntity<CartDto> getCart(
-            @PathVariable UUID cartId
-    ) {
-        var cart = cartRepository.findById(cartId).orElse(null);//check if cart exists
+    public ResponseEntity<CartDto> getCart(@PathVariable UUID cartId) {
+        //var cart = cartRepository.findById(cartId).orElse(null);//check if cart exists
+        var cart = cartRepository.getCartWithItems(cartId).orElse(null);//we can replace findById with our new custom query method
         if (cart == null) {
             return ResponseEntity.notFound().build();
         }
