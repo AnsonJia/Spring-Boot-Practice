@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -25,5 +26,5 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
 
     //when we save a parent object (cart), the children are not saved (cartItems)
     @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE) //to fix use merge for updating because this is an existing cart
-    private Set<CartItem> cartItems = new LinkedHashSet<>();
+    private Set<CartItem> items = new LinkedHashSet<>();//rename cartItems to items so mapper can auto map to dto field
 }
