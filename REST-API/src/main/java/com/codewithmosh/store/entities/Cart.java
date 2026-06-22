@@ -23,6 +23,7 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
     @Column(name = "date_created", insertable = false, updatable = false) //tell hibernate to ignore this field when generating SQL statements
     private LocalDate dateCreated;
 
-    @OneToMany(mappedBy = "cart")
+    //when we save a parent object (cart), the children are not saved (cartItems)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE) //to fix use merge for updating because this is an existing cart
     private Set<CartItem> cartItems = new LinkedHashSet<>();
 }
