@@ -25,7 +25,9 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
     private LocalDate dateCreated;
 
     //when we save a parent object (cart), the children are not saved (cartItems)
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE) //to fix use merge for updating because this is an existing cart
+    //to fix use merge for updating because this is an existing cart
+    //default for a @xtoMany is lazy loading but can set eager loading because we will always need the items when we fetch a cart
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)//eager just optimizes querying in our case
     private Set<CartItem> items = new LinkedHashSet<>();//rename cartItems to items so mapper can auto map to dto field
 
     //calculation is a part of business logic, so we have to implement it in our domain model (entity)
