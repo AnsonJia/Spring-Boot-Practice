@@ -47,28 +47,17 @@ public class CartController {
     ){
         //var cart = cartRepository.findById(cartId).orElse(null); //check if cartId is valid/exists
         var cart = cartRepository.getCartWithItems(cartId).orElse(null);//updated with new custom query method (functionally same as findById)
-
         if (cart == null) {
             return ResponseEntity.notFound().build(); //if not found return 404 not found
         }
+
         var product = productRepository.findById(request.getProductId()).orElse(null);//validate product id from request
         if (product == null) {
             return ResponseEntity.badRequest().build();//if null return 400 bad request not 404 because client sent invalid data in request
         }
-        //check if the product is already in the cart (use stream to perform operations on a collection)
-        var cartItem = cart.getItems().stream()
-                .filter(item -> item.getProduct().getId().equals(product.getId()))
-                .findFirst()
-                .orElse(null);
-        if  (cartItem != null) {
-            cartItem.setQuantity(cartItem.getQuantity() + 1); //if item already in cart, increase quantity by 1
-        }else {
-            cartItem = new CartItem(); //if item not in cart, create new cart item and add to cart
-            cartItem.setProduct(product); //set product
-            cartItem.setQuantity(1); //set quantity
-            cartItem.setCart(cart); //set cart/update cart side of relationship (associate the cart item with the cart)
-            cart.getItems().add(cartItem); //add cart item to the collection in the cart object
-        }
+        //figure out if we should increment quantity of this item or create a new item
+        var cartItem = cart.addItem(product); //use the addItem method in Cart entity to handle adding items to cart
+
         //instead of saving to a cartItem repository, save to cart repository (item is dependent on carts)
         cartRepository.save(cart);//the cart item will also be saved because of the cascade type we set in the cart entity (cascade = CascadeType.MERGE)
         var cartItemDto = cartMapper.toDto(cartItem);
@@ -100,10 +89,7 @@ public class CartController {
             );
         }
         //to validate productId, we don't use productRepository because it is unnecessary because we need to find cart item later anyway
-        var cartItem = cart.getItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst()
-                .orElse(null);
+        var cartItem = cart.getItem(productId); //use the new getItem method in the cart entity to find the cart item by product id
         if (cartItem == null) {//if invalid product, cartItem will be null, and then we can return an error
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(//instead of just .notFound().build(), we use status to return a message
                     Map.of("error", "Product was not found in the cart.")//return a meaningful message to difference the not found errors
