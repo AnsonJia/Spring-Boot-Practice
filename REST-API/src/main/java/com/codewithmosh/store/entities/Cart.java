@@ -30,11 +30,40 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
     @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)//eager just optimizes querying in our case
     private Set<CartItem> items = new LinkedHashSet<>();//rename cartItems to items so mapper can auto map to dto field
 
+
+
+    //Information Expert Principle: Assign the responsibility to the class that has the necessary information to fulfill it.
+    // In this case, the cart has all the information to calculate the total price of the cart items, getting an item, and adding an item.
+
     //calculation is a part of business logic, so we have to implement it in our domain model (entity)
     public BigDecimal getTotalPrice() { //doesn't match any name in our dto, we need custom mapping in cart mapper
         //loop over each item and add their total price together
         return items.stream()
+                //we don't use item.quantity * product.price because it should be implemented inside CartItem
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add); //[10, 20, 30], then reduce to a single number starting with 0 and add each number
+    }
+
+    //to validate productId, we don't use productRepository because it is unnecessary because we need to find cart item later anyway
+    public CartItem getItem(Long productId){//cart object knows about its items so should be in cart class
+        return items.stream().filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    //domain/buisness object that should belong to the cart class
+    public CartItem addItem(Product product){
+        //check if the product is already in the cart (use stream to perform operations on a collection)
+        var cartItem = getItem(product.getId()); //getItem method in Cart entity to find the item in the cart by product id
+        if  (cartItem != null) {
+            cartItem.setQuantity(cartItem.getQuantity() + 1); //if item already in cart, increase quantity by 1
+        }else {
+            cartItem = new CartItem(); //if item not in cart, create new cart item and add to cart
+            cartItem.setProduct(product); //set product
+            cartItem.setQuantity(1); //set quantity
+            cartItem.setCart(this); //set cart/update cart side of relationship (associate the cart item with the cart)
+            items.add(cartItem); //add cart item to the collection in the cart object
+        }
+        return cartItem; //return item to consumer of the method (CartController)
     }
 }
