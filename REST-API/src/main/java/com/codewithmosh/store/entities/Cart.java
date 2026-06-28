@@ -77,4 +77,9 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
             //however the child entity (cartItem) is now detached and violates not null for cart_id, so set orphan removal in the items field
         }
     }
+
+    //clearing cart is domain logic since cart has data about the items
+    public void clear(){
+        items.clear(); //clear all items from the cart
+    }
 }
