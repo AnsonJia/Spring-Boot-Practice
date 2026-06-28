@@ -26,8 +26,9 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
 
     //when we save a parent object (cart), the children are not saved (cartItems)
     //to fix use merge for updating because this is an existing cart
-    //default for a @xtoMany is lazy loading but can set eager loading because we will always need the items when we fetch a cart
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)//eager just optimizes querying in our case
+    //default for a @xtoMany is lazy loading but can set eager loading because we will always need the items when we fetch a cart (optimizes querying in our case)
+    //removing a cart item causes we set the cart to null but db doesn't allow cart_id to be null so orphanRemoval will remove children without a parent
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<CartItem> items = new LinkedHashSet<>();//rename cartItems to items so mapper can auto map to dto field
 
 
@@ -65,5 +66,15 @@ public class Cart { //removed unnecessary annotations and constraints to simplif
             items.add(cartItem); //add cart item to the collection in the cart object
         }
         return cartItem; //return item to consumer of the method (CartController)
+    }
+
+    //cart has all the data about its items so it should be responsible for removing an item from the cart
+    public void removeItem(Long productId){
+        var cartItem = getItem(productId); //we don't care about checking if product exists because it would be too aggressive (if not exists, just move on)
+        if (cartItem != null) {//if the item exists, remove it from the cart
+            items.remove(cartItem);
+            cartItem.setCart(null); //also set the cart associated with this item to null (update the owner side of the relationship) to keep data in sync
+            //however the child entity (cartItem) is now detached and violates not null for cart_id, so set orphan removal in the items field
+        }
     }
 }
