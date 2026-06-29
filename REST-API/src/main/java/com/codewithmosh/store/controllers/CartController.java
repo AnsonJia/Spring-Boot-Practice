@@ -12,6 +12,9 @@ import com.codewithmosh.store.mappers.CartMapper;
 import com.codewithmosh.store.repositories.CartRepository;
 import com.codewithmosh.store.repositories.ProductRepository;
 import com.codewithmosh.store.services.CartService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @RestController //controllers are only supposed to deal with http request and response so put application logic in the service layer
 @RequestMapping("/carts") //we usually use plural names
+//@Tag(name = "Carts", description = "Endpoints for managing shopping carts") //we can change the name of the controller on swagger and add a description
 public class CartController {
     //private final CartRepository cartRepository; //no longer needed because we moved application logic to service layer
     //private final CartMapper cartMapper;
@@ -43,7 +47,9 @@ public class CartController {
     }
 
     @PostMapping("/{cartId}/items")
+    //@Operation(summary = "Add an item to the cart", description = "Add a product to shopping cart.") we can add a summary/description for this endpoint on swagger
     public ResponseEntity<CartItemDto> addToCart(//we still need response entity here because we need the created status
+            //@Parameter(description = "The ID of the cart to which the item will be added")//we can also provide info of parameters to swagger
             @PathVariable UUID cartId,
             @Valid @RequestBody AddItemToCartRequest request //request dto for adding items to cart (product id) with valid annotation
     ){
