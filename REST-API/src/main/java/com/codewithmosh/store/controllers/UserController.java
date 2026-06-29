@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -23,6 +24,7 @@ import java.util.Set;
 public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;// add userMapper field
+    private final PasswordEncoder passwordEncoder;
     // method: GET, POST, PUT, DELETE
 
     //get all users from database
@@ -88,8 +90,8 @@ public class UserController {
                     Map.of("email", "email is already registered")//provide meaningful error message to client
             ); //doesn't return a UserDto so edit method param with ? for flexible return
         }
-
         var user = userMapper.toEntity(request); //map the request to an entity so we can work with it
+        user.setPassword(passwordEncoder.encode(user.getPassword())); //encode the password before saving to the database for security
         userRepository.save(user); //save user to db
 
         var userDto = userMapper.toDto(user); //map the user to a dto
