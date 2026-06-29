@@ -7,11 +7,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration //marks 3rd party class and tells spring it contains @Bean methods so spring can create instances at runtime
 @EnableWebSecurity //enables Spring Security's web security configuration.
 public class SecurityConfig {
+    //currently we are storing user passwords as plaintext in users table which is bad so we hash them
+    @Bean//anytime we need a password encoder spring will give us BCrypt
+    public PasswordEncoder passwordEncoder(){ //PasswordEncoder is an interface with methods
+        return new BCryptPasswordEncoder();//BCrypt is an implementation of PasswordEncoder that is the most secure and recommended hashing algorithm
+    }
+
+
     @Bean // Registers the returned SecurityFilterChain as a Spring bean (call method during startup)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {//try catch or throw exception to be handled somewhere else
         http    .sessionManagement(session ->
