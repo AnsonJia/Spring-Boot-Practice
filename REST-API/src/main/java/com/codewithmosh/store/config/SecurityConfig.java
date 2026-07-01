@@ -1,25 +1,47 @@
 package com.codewithmosh.store.config;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration //marks 3rd party class and tells spring it contains @Bean methods so spring can create instances at runtime
 @EnableWebSecurity //enables Spring Security's web security configuration.
-public class SecurityConfig {
+@AllArgsConstructor
+public class SecurityConfig {//at runtime when spring creates an instance of this class, it will inject UserService into UserDetailsService
+    private final UserDetailsService userDetailsService;//stores our custom UserService implementation into this field
+
     //currently we are storing user passwords as plaintext in users table which is bad so we hash them
     @Bean//anytime we need a password encoder spring will give us BCrypt
     public PasswordEncoder passwordEncoder(){ //PasswordEncoder is an interface with methods
         return new BCryptPasswordEncoder();//BCrypt is an implementation of PasswordEncoder that is the most secure and recommended hashing algorithm
     }
 
+    @Bean//using DaoAuthentication Provider which is the most common requires a userDetailsService(UserService) and passwordEncoder
+    public AuthenticationProvider authenticationProvider(){
+        //Dao finds the user and validates the password
+        var provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());//pass our password encoder defined above
+        provider.setUserDetailsService(userDetailsService);//uds is an abstraction for finding a user just like a repository
+        return provider;
+    }
+
+    @Bean //AuthenticationManager is the entry point for authentication and delegates login requests to the appropriate AuthenticationProvider (can provide multiple providers if needed)
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {//auto looks for AuthenticationProvider beans
+        return config.getAuthenticationManager();
+    }
 
     @Bean // Registers the returned SecurityFilterChain as a Spring bean (call method during startup)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {//try catch or throw exception to be handled somewhere else
