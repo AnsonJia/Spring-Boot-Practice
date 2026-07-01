@@ -83,7 +83,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        <!--SpringDoc OpenAPI Swagger dependency (tool that auto generates interactive documentation for our APIs)-->
+        <!-- SpringDoc OpenAPI dependency (automatically generates API documentation and provides the Swagger UI) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
