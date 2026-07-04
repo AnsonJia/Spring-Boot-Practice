@@ -9,3 +9,5 @@ spring:
     password: Yp040721
   jpa:
     show-sql: true
+  jwt: #take the secret from environment variable in .env file so it cant be easily discovered in the source code
+    secret: ${JWT_SECRET}
