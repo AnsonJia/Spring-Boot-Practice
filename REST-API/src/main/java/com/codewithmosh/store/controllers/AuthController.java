@@ -26,7 +26,6 @@ public class AuthController {
 
     @PostMapping("/login") //mapping controller to the login endpoint to simplify url endpoint code
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest request){
-        System.out.println("Controller reached");
         //using DaoAuthentication to delegate authentication to the manager and replace the code below
         authenticationManager.authenticate(//if bad credentials, it will throw a BadCredentialsException which needs to be handled
                 new UsernamePasswordAuthenticationToken( //need to provide an authentication object
