@@ -10,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component//mark as bean
+//filters are a class that runs before controllers and can inspect or modify HTTP requests
 public class LoggingFilter extends OncePerRequestFilter {//extends OncePerRequestFilter to ensure that this class gets called once per request
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
