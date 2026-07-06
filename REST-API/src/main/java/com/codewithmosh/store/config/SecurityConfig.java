@@ -52,6 +52,7 @@ public class SecurityConfig {//at runtime when spring creates an instance of thi
                         .requestMatchers("/carts/**").permitAll()//all endpoints matching the url will be public (** for all children)
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()//only register user endpoint (post) is public
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()//only login endpoint (post) is public
+                        .requestMatchers(HttpMethod.POST, "/auth/validate").permitAll()// allow post request to validate endpoint
                         .anyRequest().authenticated()//all other requests needs to be authenticated
                         //.anyRequest().permitAll() //all endpoints will be public
                 ); //authorize http requests
