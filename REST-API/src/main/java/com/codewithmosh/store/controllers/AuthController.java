@@ -2,7 +2,6 @@ package com.codewithmosh.store.controllers;
 
 import com.codewithmosh.store.dtos.JwtResponse;
 import com.codewithmosh.store.dtos.LoginRequest;
-import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.repositories.UserRepository;
 import com.codewithmosh.store.services.JwtService;
 import jakarta.validation.Valid;
@@ -46,6 +45,15 @@ public class AuthController {
 
         return ResponseEntity.ok(new JwtResponse(token));//newing an object requires constructors so set all args in JwtResponse
     }
+
+    //temporary solution to validate token, normally we would use a filter to validate the token for every request, not  a separate endpoint
+    @PostMapping("/validate")//edpoint is protected by default so configure in security config
+    public boolean validate(@RequestHeader("Authorization") String authHeader){//authorization header is standard for passing credentials
+        //when sending token in auth header, prefix with Bearer, but that would invalidate the token, so replace it before sending to service
+        var token = authHeader.replace("Bearer ", "");//not extracting token inside service because it expects token, not auth header
+        return jwtService.validateToken(token);
+    }
+
 
     @ExceptionHandler(BadCredentialsException.class)//exception handler to check for bad login credentials
     public ResponseEntity<Void> handleBadCredentialsExceptions(){
