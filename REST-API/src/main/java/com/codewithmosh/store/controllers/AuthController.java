@@ -49,6 +49,7 @@ public class AuthController {
     //temporary solution to validate token, normally we would use a filter to validate the token for every request, not  a separate endpoint
     @PostMapping("/validate")//edpoint is protected by default so configure in security config
     public boolean validate(@RequestHeader("Authorization") String authHeader){//authorization header is standard for passing credentials
+        System.out.println("Validate called");
         //when sending token in auth header, prefix with Bearer, but that would invalidate the token, so replace it before sending to service
         var token = authHeader.replace("Bearer ", "");//not extracting token inside service because it expects token, not auth header
         return jwtService.validateToken(token);
