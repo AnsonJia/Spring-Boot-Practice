@@ -1,5 +1,6 @@
 package com.codewithmosh.store.services;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,5 +21,19 @@ public class JwtService {
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration * 1000))//multiply by 1000 because its in milliseconds
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
                 .compact();//generate the token (like .build() in builder methods)
+    }
+
+    public boolean validateToken(String token) {
+        try {//claims are properties we know about the token (doesn't include secret)
+            var claims = Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return claims.getExpiration().after(new Date());//check if token is expired before returning
+        }catch (JwtException e) {//if any exceptions, token is invalid so return false
+            return false;
+        }
+
     }
 }
