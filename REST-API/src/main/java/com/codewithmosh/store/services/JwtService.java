@@ -1,5 +1,6 @@
 package com.codewithmosh.store.services;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -25,15 +26,20 @@ public class JwtService {
 
     public boolean validateToken(String token) {
         try {//claims are properties we know about the token (doesn't include secret)
-            var claims = Jwts.parser()
-                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+            var claims = getClaims(token);
             return claims.getExpiration().after(new Date());//check if token is expired before returning
         }catch (JwtException e) {//if any exceptions, token is invalid so return false
             return false;
         }
-
     }
+
+    private Claims getClaims(String token) {
+            return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+
 }
