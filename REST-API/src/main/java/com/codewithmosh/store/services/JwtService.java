@@ -41,5 +41,9 @@ public class JwtService {
                 .getPayload();
     }
 
+    public String getEmailFromToken(String token) {
+        return getClaims(token).getSubject();//we uniquely identify users by their email in the token subject
+    }
+
 
 }
