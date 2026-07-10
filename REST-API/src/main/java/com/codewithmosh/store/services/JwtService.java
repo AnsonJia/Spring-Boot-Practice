@@ -34,11 +34,13 @@ public class JwtService {
     }
 
     private Claims getClaims(String token) {
+            //create a jwt parser
             return Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
                 .build()
+                    //verify and parse the jwt
                 .parseSignedClaims(token)
-                .getPayload();
+                .getPayload();//get the claims from the token
     }
 
     public String getEmailFromToken(String token) {
