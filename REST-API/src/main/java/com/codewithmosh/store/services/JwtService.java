@@ -26,7 +26,7 @@ public class JwtService {
 
     public boolean validateToken(String token) {
         try {//claims are properties we know about the token (doesn't include secret)
-            var claims = getClaims(token);
+            var claims = getClaims(token);//extract the token's payload (claims)
             return claims.getExpiration().after(new Date());//check if token is expired before returning
         }catch (JwtException e) {//if any exceptions, token is invalid so return false
             return false;
