@@ -43,7 +43,7 @@ public class JwtService {
                 .getPayload();//get the payload (claims) from the token
     }
 
-    public String getEmailFromToken(String token) {
+    public String getEmailFromToken(String token) {//gets email from token so we can use in userpassauthtoken in jwtauthfilter
         return getClaims(token).getSubject();//we uniquely identify users by their email in the token subject
     }
 
