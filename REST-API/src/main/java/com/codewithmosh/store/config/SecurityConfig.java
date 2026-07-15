@@ -1,11 +1,13 @@
 package com.codewithmosh.store.config;
 
+import com.codewithmosh.store.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,12 +18,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration //marks 3rd party class and tells spring it contains @Bean methods so spring can create instances at runtime
 @EnableWebSecurity //enables Spring Security's web security configuration.
 @AllArgsConstructor
 public class SecurityConfig {//at runtime when spring creates an instance of this class, it will inject UserService into UserDetailsService
     private final UserDetailsService userDetailsService;//stores our custom UserService implementation into this field
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     //currently we are storing user passwords as plaintext in users table which is bad so we hash them
     @Bean//anytime we need a password encoder spring will give us BCrypt
@@ -52,10 +56,11 @@ public class SecurityConfig {//at runtime when spring creates an instance of thi
                         .requestMatchers("/carts/**").permitAll()//all endpoints matching the url will be public (** for all children)
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()//only register user endpoint (post) is public
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()//only login endpoint (post) is public
-                        .requestMatchers(HttpMethod.POST, "/auth/validate").permitAll()// allow post request to validate endpoint
+                        //.requestMatchers(HttpMethod.POST, "/auth/validate").permitAll()// allow post request to validate endpoint
                         .anyRequest().authenticated()//all other requests needs to be authenticated
                         //.anyRequest().permitAll() //all endpoints will be public
-                ); //authorize http requests
+                )//authorize http requests
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);//add the filter to be the first in the chain
         return http.build(); //build the securityFilterChain object and return it
     }
 }
