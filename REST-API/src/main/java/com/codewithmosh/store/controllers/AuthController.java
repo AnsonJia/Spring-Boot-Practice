@@ -2,6 +2,8 @@ package com.codewithmosh.store.controllers;
 
 import com.codewithmosh.store.dtos.JwtResponse;
 import com.codewithmosh.store.dtos.LoginRequest;
+import com.codewithmosh.store.dtos.UserDto;
+import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
 import com.codewithmosh.store.services.JwtService;
 import jakarta.validation.Valid;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +26,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserMapper userMapper;
 
     @PostMapping("/login") //mapping controller to the login endpoint to simplify url endpoint code
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest request){
@@ -47,9 +52,9 @@ public class AuthController {
     }
 
     //temporary solution to validate token, normally we would use a filter to validate the token for every request, not  a separate endpoint
-    @PostMapping("/validate")//edpoint is protected by default so configure in security config
+    @PostMapping("/validate")//endpoint is protected by default so configure in security config (removed it to test filter method)
     public boolean validate(@RequestHeader("Authorization") String authHeader){//authorization header is standard for passing credentials
-        System.out.println("Validate called");
+        //System.out.println("Validate called");
         //when sending token in auth header, prefix with Bearer, but that would invalidate the token, so replace it before sending to service
         var token = authHeader.replace("Bearer ", "");//not extracting token inside service because it expects token, not auth header
         return jwtService.validateToken(token);
