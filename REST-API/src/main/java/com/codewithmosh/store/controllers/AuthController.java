@@ -60,6 +60,18 @@ public class AuthController {
         return jwtService.validateToken(token);
     }
 
+    @GetMapping("/me")//endpoint to get the current user
+    public ResponseEntity<UserDto> me(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();// returns auth object for the current user, which was set in the filter
+        var email = (String) authentication.getPrincipal();//returns the current user/principal (email in our case) make sure to cast
+
+        var user = userRepository.findByEmail(email).orElse(null);//check if user exists
+        if (user == null){
+            return ResponseEntity.notFound().build();
+        }
+        var userDto = userMapper.toDto(user);//map to dto and return it
+        return ResponseEntity.ok(userDto);
+    }
 
     @ExceptionHandler(BadCredentialsException.class)//exception handler to check for bad login credentials
     public ResponseEntity<Void> handleBadCredentialsExceptions(){
