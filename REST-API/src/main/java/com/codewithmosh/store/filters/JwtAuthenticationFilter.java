@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -37,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//call once p
         var authentication = new UsernamePasswordAuthenticationToken( //create an authentication object
                 //userpassauthtoken has 2 implementation (principle, credentials) and (principle, credentials, authorities)
                 //first is used for login passing username/email/user and password, second is used for authenticated user
-                jwtService.getEmailFromToken(token),
+                jwtService.getUserIdFromToken(token),
                 null,
                 null
         ); //when representing authenticated user, we don't need credentials and ignore authorities for now
