@@ -15,8 +15,12 @@ public class JwtService {
     @Value("${spring.jwt.secret}")//inject the secret from application.yaml
     private String secret;
 
-    public String generateToken(User user) { //method to generate JSON web tokens
+    public String generateAccessToken(User user) { //method to generate JSON web tokens
         final long tokenExpiration = 86400; //number of seconds in 1 day
+        return generateAccessToken(user, tokenExpiration);
+    }
+
+    private String generateAccessToken(User user, long tokenExpiration) {
         return Jwts.builder() //builder object to build the token
                 //.subject(email)//set subject to anything that can uniquely identify a user (id, email, etc.)
                 .subject(user.getId().toString())//set subject to user id instead for easier lookup since it's a primary key
@@ -25,7 +29,7 @@ public class JwtService {
                 .issuedAt(new Date())//set timestamp when token was created
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration * 1000))//multiply by 1000 because its in milliseconds
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
-                .compact();//generate the token (like .build() in builder methods)
+                .compact();
     }
 
     public boolean validateToken(String token) {
