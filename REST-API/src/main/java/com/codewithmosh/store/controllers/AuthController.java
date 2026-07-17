@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +46,7 @@ public class AuthController {
         //return ResponseEntity.ok().build();
 
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();//find user by email (throw exception to be handled by auth manager)
-        var token = jwtService.generateToken(user);//pass whole user object (so we can add username and email as claims)
+        var token = jwtService.generateAccessToken(user);//pass whole user object (so we can add username and email as claims)
         //var token = jwtService.generateToken(request.getEmail());//generate the token using the users email
 
         return ResponseEntity.ok(new JwtResponse(token));//newing an object requires constructors so set all args in JwtResponse
