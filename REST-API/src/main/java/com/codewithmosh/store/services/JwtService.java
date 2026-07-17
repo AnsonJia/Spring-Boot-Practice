@@ -1,5 +1,6 @@
 package com.codewithmosh.store.services;
 
+import com.codewithmosh.store.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -14,10 +15,13 @@ public class JwtService {
     @Value("${spring.jwt.secret}")//inject the secret from application.yaml
     private String secret;
 
-    public String generateToken(String email) { //method to generate JSON web tokens
+    public String generateToken(User user) { //method to generate JSON web tokens
         final long tokenExpiration = 86400; //number of seconds in 1 day
         return Jwts.builder() //builder object to build the token
-                .subject(email)//set subject to anything that can uniquely identify a user (id, email, etc.)
+                //.subject(email)//set subject to anything that can uniquely identify a user (id, email, etc.)
+                .subject(user.getId().toString())//set subject to user id instead for easier lookup since it's a primary key
+                .claim("email", user.getEmail())//adding extra claims on common used properties like email and name
+                .claim("name", user.getName())
                 .issuedAt(new Date())//set timestamp when token was created
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration * 1000))//multiply by 1000 because its in milliseconds
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
@@ -43,8 +47,8 @@ public class JwtService {
                 .getPayload();//get the payload (claims) from the token
     }
 
-    public String getEmailFromToken(String token) {//gets email from token so we can use in userpassauthtoken in jwtauthfilter
-        return getClaims(token).getSubject();//we uniquely identify users by their email in the token subject
+    public Long getUserIdFromToken(String token) {//gets user id from token so we can use in userpassauthtoken in jwtauthfilter
+        return Long.valueOf(getClaims(token).getSubject());//we uniquely identify users by their id in the token subject
     }
 
 
