@@ -46,7 +46,9 @@ public class AuthController {
         }*/
         //return ResponseEntity.ok().build();
 
-        var token = jwtService.generateToken(request.getEmail());//generate the token using the users email
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();//find user by email (throw exception to be handled by auth manager)
+        var token = jwtService.generateToken(user);//pass whole user object (so we can add username and email as claims)
+        //var token = jwtService.generateToken(request.getEmail());//generate the token using the users email
 
         return ResponseEntity.ok(new JwtResponse(token));//newing an object requires constructors so set all args in JwtResponse
     }
@@ -63,9 +65,9 @@ public class AuthController {
     @GetMapping("/me")//endpoint to get the current user
     public ResponseEntity<UserDto> me(){
         var authentication = SecurityContextHolder.getContext().getAuthentication();// returns auth object for the current user, which was set in the filter
-        var email = (String) authentication.getPrincipal();//returns the current user/principal (email in our case) make sure to cast
+        var userId = (Long) authentication.getPrincipal();//returns the current user/principal (id in our case) make sure to cast
 
-        var user = userRepository.findByEmail(email).orElse(null);//check if user exists
+        var user = userRepository.findById(userId).orElse(null);//check if user exists
         if (user == null){
             return ResponseEntity.notFound().build();
         }
