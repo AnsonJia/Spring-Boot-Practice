@@ -16,7 +16,12 @@ public class JwtService {
     private String secret;
 
     public String generateAccessToken(User user) { //method to generate JSON web tokens
-        final long tokenExpiration = 86400; //number of seconds in 1 day
+        final long tokenExpiration = 300; //number of seconds in 5 minutes (short-lived token to be more secure since its exposed)
+        return generateAccessToken(user, tokenExpiration);
+    }
+
+    public String generateRefreshToken(User user) { //method to generate refresh tokens
+        final long tokenExpiration = 604800; //number of seconds in 7 days (long-lived since it's not exposed)
         return generateAccessToken(user, tokenExpiration);
     }
 
