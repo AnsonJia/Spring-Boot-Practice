@@ -6,6 +6,8 @@ import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
 import com.codewithmosh.store.services.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,9 @@ public class AuthController {
     private final UserMapper userMapper;
 
     @PostMapping("/login") //mapping controller to the login endpoint to simplify url endpoint code
-    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest request){
+    public ResponseEntity<JwtResponse> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse response){//provides low level access to http response for our cookie
         //using DaoAuthentication to delegate authentication to the manager and replace the code below
         authenticationManager.authenticate(//if bad credentials, it will throw a BadCredentialsException which needs to be handled
                 new UsernamePasswordAuthenticationToken( //need to provide an authentication object
@@ -46,10 +50,18 @@ public class AuthController {
         //return ResponseEntity.ok().build();
 
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();//find user by email (throw exception to be handled by auth manager)
-        var token = jwtService.generateAccessToken(user);//pass whole user object (so we can add username and email as claims)
-        //var token = jwtService.generateToken(request.getEmail());//generate the token using the users email
+        var accessToken = jwtService.generateAccessToken(user);//pass whole user object (so we can add username and email as claims)
+        var refreshToken = jwtService.generateRefreshToken(user);//generate refresh token and store it
 
-        return ResponseEntity.ok(new JwtResponse(token));//newing an object requires constructors so set all args in JwtResponse
+        //we put refresh token into http only cookies which are not accessible by JavaScript making it hard to steal
+        var cookie = new Cookie("refreshToken", refreshToken);//Cookie defined in jakarta.servlet.http (name, value)
+        cookie.setHttpOnly(true);//set http only so not accessible by JavaScript
+        cookie.setPath("/auth/refresh");//specifies where the cookie can be sent to
+        cookie.setMaxAge(604800);//expiration (same value as token expiration in JwtService)
+        cookie.setSecure(true);//only will be sent over http connections (prevent being exposed on unencrypted http channels)
+        response.addCookie(cookie);//put cookie in the response
+
+        return ResponseEntity.ok(new JwtResponse(accessToken));//newing an object requires constructors so set all args in JwtResponse
     }
 
     //temporary solution to validate token, normally we would use a filter to validate the token for every request, not  a separate endpoint
