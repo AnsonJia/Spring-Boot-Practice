@@ -11,3 +11,5 @@ spring:
     show-sql: true
   jwt: #take the secret from environment variable in .env file so it cant be easily discovered in the source code
     secret: ${JWT_SECRET}
+    accessTokenExpiration: 300 #5 minutes
+    refreshTokenExpiration: 604800 #7 days
