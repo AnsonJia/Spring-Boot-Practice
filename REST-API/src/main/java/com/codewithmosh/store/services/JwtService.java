@@ -17,15 +17,15 @@ public class JwtService {
 
     public String generateAccessToken(User user) { //method to generate JSON web tokens
         final long tokenExpiration = 300; //number of seconds in 5 minutes (short-lived token to be more secure since its exposed)
-        return generateAccessToken(user, tokenExpiration);
+        return generateToken(user, tokenExpiration);
     }
 
     public String generateRefreshToken(User user) { //method to generate refresh tokens
         final long tokenExpiration = 604800; //number of seconds in 7 days (long-lived since it's not exposed)
-        return generateAccessToken(user, tokenExpiration);
+        return generateToken(user, tokenExpiration);
     }
 
-    private String generateAccessToken(User user, long tokenExpiration) {
+    private String generateToken(User user, long tokenExpiration) {
         return Jwts.builder() //builder object to build the token
                 //.subject(email)//set subject to anything that can uniquely identify a user (id, email, etc.)
                 .subject(user.getId().toString())//set subject to user id instead for easier lookup since it's a primary key
