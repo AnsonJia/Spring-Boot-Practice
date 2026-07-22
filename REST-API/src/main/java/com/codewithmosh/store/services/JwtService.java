@@ -1,28 +1,32 @@
 package com.codewithmosh.store.services;
 
+import com.codewithmosh.store.config.JwtConfig;
 import com.codewithmosh.store.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@AllArgsConstructor
 @Service
 public class JwtService {
-    @Value("${spring.jwt.secret}")//inject the secret from application.yaml
-    private String secret;
+    //@Value("${spring.jwt.secret}")//inject the secret from application.yaml
+    //private String secret;
+    private final JwtConfig jwtConfig;//needs allargs
 
     public String generateAccessToken(User user) { //method to generate JSON web tokens
-        final long tokenExpiration = 300; //number of seconds in 5 minutes (short-lived token to be more secure since its exposed)
-        return generateToken(user, tokenExpiration);
+        //final long tokenExpiration = 300; //number of seconds in 5 minutes (short-lived token to be more secure since its exposed)
+        return generateToken(user, jwtConfig.getAccessTokenExpiration());//get expiration from config class instead of hardcode
     }
 
     public String generateRefreshToken(User user) { //method to generate refresh tokens
-        final long tokenExpiration = 604800; //number of seconds in 7 days (long-lived since it's not exposed)
-        return generateToken(user, tokenExpiration);
+        //final long tokenExpiration = 604800; //number of seconds in 7 days (long-lived since it's not exposed)
+        return generateToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
     private String generateToken(User user, long tokenExpiration) {
@@ -33,7 +37,7 @@ public class JwtService {
                 .claim("name", user.getName())
                 .issuedAt(new Date())//set timestamp when token was created
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration * 1000))//multiply by 1000 because its in milliseconds
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
+                .signWith(jwtConfig.getSecretKey())//provide a secret from YAML so it's not hardcoded
                 .compact();
     }
 
@@ -50,7 +54,7 @@ public class JwtService {
             //create a jwt parser
             return Jwts.parser()
                 //verify and parse the jwt
-                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))//provide a secret from YAML so it's not hardcoded
+                .verifyWith(jwtConfig.getSecretKey())//provide a secret from YAML so it's not hardcoded
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();//get the payload (claims) from the token
