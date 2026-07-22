@@ -1,5 +1,6 @@
 package com.codewithmosh.store.controllers;
 
+import com.codewithmosh.store.config.JwtConfig;
 import com.codewithmosh.store.dtos.JwtResponse;
 import com.codewithmosh.store.dtos.LoginRequest;
 import com.codewithmosh.store.dtos.UserDto;
@@ -27,6 +28,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final JwtConfig jwtConfig;
     private final UserMapper userMapper;
 
     @PostMapping("/login") //mapping controller to the login endpoint to simplify url endpoint code
@@ -57,7 +59,7 @@ public class AuthController {
         var cookie = new Cookie("refreshToken", refreshToken);//Cookie defined in jakarta.servlet.http (name, value)
         cookie.setHttpOnly(true);//set http only so not accessible by JavaScript
         cookie.setPath("/auth/refresh");//specifies where the cookie can be sent to
-        cookie.setMaxAge(604800);//expiration (same value as token expiration in JwtService)
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());//expiration (same value as token expiration in JwtService)
         cookie.setSecure(true);//only will be sent over http connections (prevent being exposed on unencrypted http channels)
         response.addCookie(cookie);//put cookie in the response
 
