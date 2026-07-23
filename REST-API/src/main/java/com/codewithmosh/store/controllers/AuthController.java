@@ -66,13 +66,19 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(accessToken));//newing an object requires constructors so set all args in JwtResponse
     }
 
-    //temporary solution to validate token, normally we would use a filter to validate the token for every request, not  a separate endpoint
-    @PostMapping("/validate")//endpoint is protected by default so configure in security config (removed it to test filter method)
-    public boolean validate(@RequestHeader("Authorization") String authHeader){//authorization header is standard for passing credentials
-        //System.out.println("Validate called");
-        //when sending token in auth header, prefix with Bearer, but that would invalidate the token, so replace it before sending to service
-        var token = authHeader.replace("Bearer ", "");//not extracting token inside service because it expects token, not auth header
-        return jwtService.validateToken(token);
+    @PostMapping("/refresh")//endpoint to give the user a new accessToken
+    public ResponseEntity<JwtResponse> refresh(
+        @CookieValue(value = "refreshToken") String refreshToken //get cookie value from request
+        ){
+        if (!jwtService.validateToken(refreshToken)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        //extract user id from token and find user in database
+        var userId = jwtService.getUserIdFromToken(refreshToken);
+        var user = userRepository.findById(userId).orElseThrow();//throw exception if not found (client request so user should exist)
+        var accessToken = jwtService.generateAccessToken(user);//generate a new accessToken
+
+        return ResponseEntity.ok(new JwtResponse(accessToken));//return the token
     }
 
     @GetMapping("/me")//endpoint to get the current user
