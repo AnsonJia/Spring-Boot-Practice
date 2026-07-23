@@ -27,6 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//call once p
             filterChain.doFilter(request, response);//spring security will now check if the endpoint is protected and deny access
             return;
         }
+        //when sending token in auth header, prefix with Bearer, but that would invalidate the token, so replace it before sending to service
         var token = authHeader.replace("Bearer ", "");//if auth header exists, extract token and validate
         if (!jwtService.validateToken(token)) { //if token is invalid, pass request to next filter in chain
             filterChain.doFilter(request, response);//let spring security process the request
