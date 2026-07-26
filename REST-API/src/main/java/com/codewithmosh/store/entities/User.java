@@ -30,6 +30,10 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)//Store the enum as its name (e.g., "ADMIN") instead of its ordinal value.
+    private Role role;
+
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
