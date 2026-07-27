@@ -4,6 +4,7 @@ import com.codewithmosh.store.dtos.ChangePasswordRequest;
 import com.codewithmosh.store.dtos.RegisterUserRequest;
 import com.codewithmosh.store.dtos.UpdateUserRequest;
 import com.codewithmosh.store.dtos.UserDto;
+import com.codewithmosh.store.entities.Role;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -92,6 +93,7 @@ public class UserController {
         }
         var user = userMapper.toEntity(request); //map the request to an entity so we can work with it
         user.setPassword(passwordEncoder.encode(user.getPassword())); //encode the password before saving to the database for security
+        user.setRole(Role.USER); //set the role to USER by default
         userRepository.save(user); //save user to db
 
         var userDto = userMapper.toDto(user); //map the user to a dto
