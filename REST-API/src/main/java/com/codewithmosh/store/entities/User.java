@@ -31,7 +31,7 @@ public class User {
     private String password;
 
     @Column(name = "role")
-    @Enumerated(EnumType.STRING)//Store the enum as its name (e.g., "ADMIN") instead of its ordinal value.
+    @Enumerated(EnumType.STRING)//Store the enum as its string name (e.g., "ADMIN") instead of its ordinal value (0, 1).
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
