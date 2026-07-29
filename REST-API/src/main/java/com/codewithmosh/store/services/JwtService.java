@@ -35,6 +35,7 @@ public class JwtService {
                 .subject(user.getId().toString())//set subject to user id instead for easier lookup since it's a primary key
                 .claim("email", user.getEmail())//adding extra claims on common used properties like email and name
                 .claim("name", user.getName())
+                .claim("role", user.getRole())
                 .issuedAt(new Date())//set timestamp when token was created
                 .expiration(new Date(System.currentTimeMillis() + tokenExpiration * 1000))//multiply by 1000 because its in milliseconds
                 .signWith(jwtConfig.getSecretKey())//provide a secret from YAML so it's not hardcoded
