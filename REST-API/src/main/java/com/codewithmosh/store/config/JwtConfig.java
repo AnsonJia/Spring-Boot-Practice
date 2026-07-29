@@ -11,6 +11,7 @@ import javax.crypto.SecretKey;
 @ConfigurationProperties(prefix = "spring.jwt")//prefix for properties in application.properties file
 @Data
 public class JwtConfig {//class for encapsulating token settings
+    //properties from application.properties file
     private String secret;
     private int accessTokenExpiration;
     private int refreshTokenExpiration;
