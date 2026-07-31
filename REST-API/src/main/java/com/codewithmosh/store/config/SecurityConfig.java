@@ -69,7 +69,7 @@ public class SecurityConfig {//at runtime when spring creates an instance of thi
                         c.authenticationEntryPoint(//if user is not authenticated return 401 unauthorized (default is 403)
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
                         c.accessDeniedHandler(//if user is authenticated but does not have the required access role return 403 forbidden
-                                ((request, response, accessDeniedException) ->
+                                ((request, response, accessDeniedException) ->//another lambda that takes req res and exception
                                         response.setStatus(HttpStatus.FORBIDDEN.value())));
                 });
 
