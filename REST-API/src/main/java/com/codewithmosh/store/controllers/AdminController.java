@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admim")
+@RequestMapping("/admin")
 public class AdminController {
     @GetMapping("/hello")//test endpoint for admin role based authorization
     public String sayHello() {
