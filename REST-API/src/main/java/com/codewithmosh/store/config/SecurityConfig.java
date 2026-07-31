@@ -1,5 +1,6 @@
 package com.codewithmosh.store.config;
 
+import com.codewithmosh.store.entities.Role;
 import com.codewithmosh.store.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +57,7 @@ public class SecurityConfig {//at runtime when spring creates an instance of thi
                 .csrf(AbstractHttpConfigurer::disable) //CSRF (Cross-Site Request Forgery) common in traditional but not rest so disable to improve performance
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/carts/**").permitAll()//all endpoints matching the url will be public (** for all children)
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())//only admin role can access endpoints matching the url
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()//only register user endpoint (post) is public
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()//only login endpoint (post) is public
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()//allow refresh endpoint to be public (otherwise requires access token which may be expired)
@@ -63,9 +65,13 @@ public class SecurityConfig {//at runtime when spring creates an instance of thi
                         //.anyRequest().permitAll() //all endpoints will be public
                 )//authorize http requests
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)//add the filter to be the first in the chain
-                .exceptionHandling(c -> //takes a lambda function
+                .exceptionHandling(c -> {//takes a lambda function
                         c.authenticationEntryPoint(//if user is not authenticated return 401 unauthorized (default is 403)
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                        c.accessDeniedHandler(//if user is authenticated but does not have the required access role return 403 forbidden
+                                ((request, response, accessDeniedException) ->
+                                        response.setStatus(HttpStatus.FORBIDDEN.value())));
+                });
 
         return http.build(); //build the securityFilterChain object and return it
     }
