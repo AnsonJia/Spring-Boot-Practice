@@ -1,6 +1,7 @@
 package com.codewithmosh.store.services;
 
 import com.codewithmosh.store.config.JwtConfig;
+import com.codewithmosh.store.entities.Role;
 import com.codewithmosh.store.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -63,6 +64,10 @@ public class JwtService {
 
     public Long getUserIdFromToken(String token) {//gets user id from token so we can use in userpassauthtoken in jwtauthfilter
         return Long.valueOf(getClaims(token).getSubject());//we uniquely identify users by their id in the token subject
+    }
+
+    public Role getRoleFromToken(String token) {//method to get role from user token to use in authfilter for authorities
+        return Role.valueOf(getClaims(token).get("role", String.class));//get role from token claims and parse into Role object
     }
 
 
