@@ -18,5 +18,5 @@ public class JwtConfig {//class for encapsulating token settings
 
     public SecretKey getSecretKey() {//method to get the secret key for signing the token
         return Keys.hmacShaKeyFor(secret.getBytes());
-    }
+    }//creates a secret key using the secret string from application.properties file and converts it to a byte array
 }
