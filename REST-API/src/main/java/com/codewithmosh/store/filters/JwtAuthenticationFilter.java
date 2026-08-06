@@ -31,20 +31,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {//call once p
         }
         //when sending token in auth header, prefix with Bearer, but that would invalidate the token, so replace it before sending to service
         var token = authHeader.replace("Bearer ", "");//if auth header exists, extract token and validate
-        if (!jwtService.validateToken(token)) { //if token is invalid, pass request to next filter in chain
+        var jwt = jwtService.parseToken(token);// parses the token into a jwt object with all the info that we can use
+        if (jwt == null || jwt.isExpired()) { //if token is invalid, pass request to next filter in chain
             filterChain.doFilter(request, response);//let spring security process the request
             return;
         }
 
-        var role = jwtService.getRoleFromToken(token);
-        var userId = jwtService.getUserIdFromToken(token);
+        //var role = jwtService.getRoleFromToken(token);
+        //var userId = jwtService.getUserIdFromToken(token);
         //at this point it is a valid token
         var authentication = new UsernamePasswordAuthenticationToken( //create an authentication object
                 //userpassauthtoken has 2 implementation (principle, credentials) and (principle, credentials, authorities)
                 //first is used for login passing username/email/user and password, second is used for authenticated user
-                userId,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_"+role))//authorities (roles {roles need prefix ROLE_} or permissions)
+                jwt.getUserId(),//get user id and role from the jwt object
+                null,//credentials
+                List.of(new SimpleGrantedAuthority("ROLE_"+ jwt.getRole()))//authorities (roles {roles need prefix ROLE_} or permissions)
         ); //when representing already authenticated user, we don't need credentials
 
         authentication.setDetails(//boilerplate code
