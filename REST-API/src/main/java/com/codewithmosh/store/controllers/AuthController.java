@@ -56,29 +56,31 @@ public class AuthController {
         var refreshToken = jwtService.generateRefreshToken(user);//generate refresh token and store it
 
         //we put refresh token into http only cookies which are not accessible by JavaScript making it hard to steal
-        var cookie = new Cookie("refreshToken", refreshToken);//Cookie defined in jakarta.servlet.http (name, value)
+        var cookie = new Cookie("refreshToken", refreshToken.toString());//Cookie defined in jakarta.servlet.http (name, value)
         cookie.setHttpOnly(true);//set http only so not accessible by JavaScript
         cookie.setPath("/auth/refresh");//specifies where the cookie can be sent to
         cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());//expiration (same value as token expiration in JwtService)
         cookie.setSecure(true);//only will be sent over http connections (prevent being exposed on unencrypted http channels)
         response.addCookie(cookie);//put cookie in the response
 
-        return ResponseEntity.ok(new JwtResponse(accessToken));//newing an object requires constructors so set all args in JwtResponse
+        return ResponseEntity.ok(new JwtResponse(accessToken.toString()));//newing an object requires constructors so set all args in JwtResponse
     }
 
     @PostMapping("/refresh")//endpoint to give the user a new accessToken
     public ResponseEntity<JwtResponse> refresh(
         @CookieValue(value = "refreshToken") String refreshToken //get cookie value from request
         ){
-        if (!jwtService.validateToken(refreshToken)){
+        var jwt = jwtService.parseToken(refreshToken); // parses the token into a jwt object with all the info that we can use
+        //if (!jwtService.validateToken(refreshToken)){
+        if (jwt == null || jwt.isExpired()) {//if token is invalid unauth
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         //extract user id from token and find user in database
-        var userId = jwtService.getUserIdFromToken(refreshToken);
-        var user = userRepository.findById(userId).orElseThrow();//throw exception if not found (client request so user should exist)
+        //var userId = jwtService.getUserIdFromToken(refreshToken);
+        var user = userRepository.findById(jwt.getUserId()).orElseThrow();//throw exception if not found (client request so user should exist)
         var accessToken = jwtService.generateAccessToken(user);//generate a new accessToken
 
-        return ResponseEntity.ok(new JwtResponse(accessToken));//return the token
+        return ResponseEntity.ok(new JwtResponse(accessToken.toString()));//return the token
     }
 
     @GetMapping("/me")//endpoint to get the current user
