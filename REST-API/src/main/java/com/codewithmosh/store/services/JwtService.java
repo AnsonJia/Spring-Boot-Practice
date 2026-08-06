@@ -20,16 +20,48 @@ public class JwtService {
     //private String secret;
     private final JwtConfig jwtConfig;//needs allargs
 
-    public String generateAccessToken(User user) { //method to generate JSON web tokens
+    public Jwt generateAccessToken(User user) { //method to generate JSON web tokens
         //final long tokenExpiration = 300; //number of seconds in 5 minutes (short-lived token to be more secure since its exposed)
         return generateToken(user, jwtConfig.getAccessTokenExpiration());//get expiration from config class instead of hardcode
     }
 
-    public String generateRefreshToken(User user) { //method to generate refresh tokens
+    public Jwt generateRefreshToken(User user) { //method to generate refresh tokens
         //final long tokenExpiration = 604800; //number of seconds in 7 days (long-lived since it's not exposed)
         return generateToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
+    private Jwt generateToken(User user, long tokenExpiration) {
+        var claims = Jwts.claims()//claims builder object
+                .subject(user.getId().toString())//set subject to anything that can uniquely identify a user (id, email, etc.)
+                .add("email", user.getEmail())//add our custom claims to be included in the token
+                .add("name", user.getName())
+                .add("role", user.getRole())
+                .issuedAt(new Date())//set timestamp when token was created
+                .expiration(new Date(System.currentTimeMillis() + tokenExpiration * 1000))//multiply by 1000 because its in milliseconds
+                .build();//build the claims object
+        return new Jwt(claims, jwtConfig.getSecretKey()); //return a jwt object with claims and secret
+    }
+
+    public Jwt parseToken(String token) {
+        try {
+            var claims = getClaims(token);
+            return new Jwt(claims, jwtConfig.getSecretKey());
+        } catch (JwtException e) {
+            return null;
+        }
+    }
+
+    private Claims getClaims(String token) {
+            //create a jwt parser
+            return Jwts.parser()
+                //verify and parse the jwt
+                .verifyWith(jwtConfig.getSecretKey())//provide a secret from YAML so it's not hardcoded
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();//get the payload (claims) from the token
+    }
+
+    /*
     private String generateToken(User user, long tokenExpiration) {
         return Jwts.builder() //builder object to build the token
                 //.subject(email)//set subject to anything that can uniquely identify a user (id, email, etc.)
@@ -52,23 +84,13 @@ public class JwtService {
         }
     }
 
-    private Claims getClaims(String token) {
-            //create a jwt parser
-            return Jwts.parser()
-                //verify and parse the jwt
-                .verifyWith(jwtConfig.getSecretKey())//provide a secret from YAML so it's not hardcoded
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();//get the payload (claims) from the token
-    }
-
     public Long getUserIdFromToken(String token) {//gets user id from token so we can use in userpassauthtoken in jwtauthfilter
         return Long.valueOf(getClaims(token).getSubject());//we uniquely identify users by their id in the token subject
     }
 
     public Role getRoleFromToken(String token) {//method to get role from user token to use in authfilter for authorities
         return Role.valueOf(getClaims(token).get("role", String.class));//get role from token claims and parse into Role object
-    }
+    }*/
 
 
 }
