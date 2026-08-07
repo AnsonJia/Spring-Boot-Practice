@@ -36,7 +36,7 @@ public class Order {//generated with new + jpa entities from DB + cleanup unnece
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)//when we save a parent, the child is not saved so set cascade
     private Set<OrderItem> items = new LinkedHashSet<>();
 
 
